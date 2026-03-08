@@ -3,23 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>French Dictation Master</title>
-    <link rel="apple-touch-icon" href="https://img.icons8.com/fluency/240/fleur-de-lis.png">
-    <link rel="icon" type="image/png" href="https://img.icons8.com/fluency/240/fleur-de-lis.png">
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>French Dictation</title>
+    
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/197/197560.png">
+    <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/197/197560.png">
+    
     <meta name="apple-mobile-web-app-capable" content="yes">
-
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
     <script>
-        // --- CORE LOGIC & STATE ---
         let currentText = "";
         let sessionScores = [];
 
-        // FIXED: Function defined early to prevent ReferenceErrors
         function toggleSettings() {
             const area = document.getElementById('settings-area');
-            if (area) {
-                area.classList.toggle('hidden');
-            }
+            if (area) area.classList.toggle('hidden');
         }
 
         function saveKey() {
@@ -50,7 +50,7 @@
             const btn = document.getElementById('main-btn');
 
             if(!key) {
-                alert("Please enter your Gemini API Key in Settings first!");
+                alert("Enter your Gemini API Key in Settings!");
                 toggleSettings();
                 return;
             }
@@ -61,7 +61,6 @@
             btn.disabled = true;
             btn.innerText = "Generating...";
             
-            // USING GEMINI 2.5 FLASH AS REQUESTED
             const model = "gemini-2.5-flash"; 
             
             try {
@@ -70,24 +69,19 @@
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({ contents: [{ parts: [{ text: prompt }]}] })
                 });
-                
                 const data = await response.json();
-                
                 if (data.error) throw new Error(data.error.message);
 
                 currentText = data.candidates[0].content.parts[0].text.trim();
 
-                // UI Updates
                 document.getElementById('audio-controls').classList.remove('hidden');
                 document.getElementById('input-area').classList.remove('hidden');
                 document.getElementById('result-box').classList.add('hidden');
                 document.getElementById('user-input').value = "";
                 btn.disabled = false;
                 btn.innerText = "Get New Sentence";
-                
                 playAudio();
             } catch (e) {
-                console.error(e);
                 alert("Error: " + e.message);
                 btn.disabled = false;
                 btn.innerText = "Try Again";
@@ -117,7 +111,6 @@
             scoreText.innerText = score + "%";
             document.getElementById('correct-answer').innerText = currentText;
 
-            // Color coding based on performance
             if(score >= 90) scoreText.className = "text-4xl font-black text-center mb-2 text-emerald-500";
             else if(score >= 70) scoreText.className = "text-4xl font-black text-center mb-2 text-orange-500";
             else scoreText.className = "text-4xl font-black text-center mb-2 text-red-500";
@@ -139,11 +132,7 @@
             for (let j = 0; j <= b.length; j++) tmp[0][j] = j;
             for (let i = 1; i <= a.length; i++) {
                 for (let j = 1; j <= b.length; j++) {
-                    tmp[i][j] = Math.min(
-                        tmp[i - 1][j] + 1,
-                        tmp[i][j - 1] + 1,
-                        tmp[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1)
-                    );
+                    tmp[i][j] = Math.min(tmp[i-1][j]+1, tmp[i][j-1]+1, tmp[i-1][j-1]+(a[i-1]===b[j-1]?0:1));
                 }
             }
             return tmp[a.length][b.length];
@@ -151,11 +140,8 @@
 
         window.onload = () => {
             const savedKey = localStorage.getItem('gemini_api_key');
-            if(savedKey) {
-                document.getElementById('api-key').value = savedKey;
-            } else {
-                toggleSettings(); 
-            }
+            if(savedKey) document.getElementById('api-key').value = savedKey;
+            else toggleSettings();
             updateStatsUI();
         };
     </script>
@@ -163,35 +149,29 @@
 <body class="bg-slate-100 min-h-screen flex flex-col items-center p-4 font-sans text-slate-800">
 
     <div class="w-full max-w-md bg-white rounded-3xl shadow-xl p-6 mt-2 border border-slate-200 relative">
-        
         <header class="flex justify-between items-center mb-4">
             <div>
                 <h1 class="text-xl font-bold text-blue-800 tracking-tight">French Dictation</h1>
-                <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest leading-none">Toronto Learner Edition</p>
+                <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest leading-none">Toronto Edition</p>
             </div>
-            <button onclick="toggleSettings()" 
-                    id="settings-btn"
-                    class="bg-slate-100 hover:bg-slate-200 p-3 rounded-full transition-colors z-50 relative flex items-center justify-center"
-                    style="min-width: 48px; min-height: 48px;">
+            <button onclick="toggleSettings()" id="settings-btn" class="bg-slate-100 p-3 rounded-full flex items-center justify-center" style="min-width: 48px; min-height: 48px;">
                 <span class="text-xl">⚙️</span>
             </button>
         </header>
 
         <div id="settings-area" class="hidden absolute top-16 left-0 right-0 mx-4 z-40 bg-white p-6 rounded-2xl border-2 border-blue-100 shadow-2xl space-y-4">
-            <h2 class="font-bold text-blue-800 border-b pb-2">App Settings</h2>
+            <h2 class="font-bold text-blue-800 border-b pb-2">Settings</h2>
             <div>
                 <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Gemini API Key</label>
-                <input type="password" id="api-key" onchange="saveKey()" placeholder="Key is saved on your device" 
-                       class="w-full p-3 rounded-xl border border-slate-300 text-sm outline-none focus:border-blue-500 bg-slate-50">
+                <input type="password" id="api-key" onchange="saveKey()" placeholder="Saved on device" class="w-full p-3 rounded-xl border border-slate-300 text-sm outline-none focus:border-blue-500 bg-slate-50">
             </div>
-            
             <div class="grid grid-cols-2 gap-3">
                 <div>
                     <label class="block text-[10px] font-bold text-slate-500 mb-1 uppercase text-center">Length</label>
                     <select id="length" class="w-full p-2 bg-white border rounded-lg text-xs">
-                        <option value="short">Short (8)</option>
-                        <option value="medium" selected>Medium (12)</option>
-                        <option value="long">Long (18+)</option>
+                        <option value="short">Short</option>
+                        <option value="medium" selected>Medium</option>
+                        <option value="long">Long</option>
                     </select>
                 </div>
                 <div>
@@ -199,11 +179,10 @@
                     <select id="speed" class="w-full p-2 bg-white border rounded-lg text-xs">
                         <option value="0.65">Slow</option>
                         <option value="0.85" selected>Normal</option>
-                        <option value="1.0">Fast</option>
                     </select>
                 </div>
             </div>
-            <button onclick="toggleSettings()" class="w-full p-3 bg-blue-600 text-white rounded-xl text-sm font-bold uppercase shadow-lg">Save & Close</button>
+            <button onclick="toggleSettings()" class="w-full p-3 bg-blue-600 text-white rounded-xl text-sm font-bold uppercase">Save & Close</button>
         </div>
 
         <div id="stats-bar" class="flex justify-between items-center bg-blue-50 p-3 rounded-2xl mb-6 border border-blue-100">
@@ -220,38 +199,9 @@
         </div>
 
         <div class="space-y-4">
-            <button onclick="generateDictation()" id="main-btn" 
-                    class="w-full bg-blue-600 text-white font-bold py-4 rounded-2xl shadow-lg active:scale-95 transition-all text-lg">
+            <button onclick="generateDictation()" id="main-btn" class="w-full bg-blue-600 text-white font-bold py-4 rounded-2xl shadow-lg active:scale-95 text-lg">
                 Get New Sentence
             </button>
-
             <div id="audio-controls" class="hidden flex gap-2">
-                <button onclick="playAudio()" class="flex-1 bg-emerald-500 text-white font-bold py-4 rounded-2xl shadow-md active:scale-95 flex items-center justify-center gap-2">
-                    Listen 🔊
-                </button>
-                <button onclick="playAudio(0.55)" class="px-5 bg-amber-400 text-white font-bold rounded-2xl shadow-md active:scale-95">
-                    Turtle 🐢
-                </button>
-            </div>
-
-            <div id="input-area" class="hidden">
-                <textarea id="user-input" rows="3" placeholder="Type the French audio here..." 
-                          class="w-full p-4 border-2 border-slate-200 rounded-2xl focus:border-blue-500 outline-none mb-3 resize-none"></textarea>
-                
-                <button onclick="checkScore()" class="w-full bg-orange-500 text-white font-bold py-4 rounded-2xl shadow-lg active:scale-95 text-lg uppercase tracking-wide">
-                    Check Spelling
-                </button>
-            </div>
-        </div>
-
-        <div id="result-box" class="hidden mt-6 p-5 rounded-2xl border bg-slate-50 border-slate-200 animate-pulse">
-            <div id="score-text" class="text-4xl font-black text-center mb-2">0%</div>
-            <div class="h-[1px] bg-slate-200 w-full mb-4"></div>
-            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Correct French:</p>
-            <p id="correct-answer" class="text-sm italic text-slate-700 leading-relaxed"></p>
-        </div>
-    </div>
-
-</body>
-
-</html>
+                <button onclick="playAudio()" class="flex-1 bg-emerald-500 text-white font-bold py-4 rounded-2xl shadow-md active:scale-95">Listen 🔊</button>
+                <button onclick="playAudio(0.55)" class="px-5 bg-amber-400 text-white
