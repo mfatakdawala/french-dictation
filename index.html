@@ -3,17 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Dictée Pro v2.2</title>
+    <title>Dictée Pro v2.2.1</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         .accent-btn { @apply bg-slate-100 p-2 rounded-xl text-sm font-bold w-12 h-12 flex items-center justify-center active:bg-blue-600 active:text-white transition-all shadow-sm; }
         ::-webkit-scrollbar { display: none; }
-        
-        /* Smooth Slide Animations */
         @keyframes slideUp { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         .animate-slide-up { animation: slideUp 0.3s ease-out; }
-        
         .toast { position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%); z-index: 100; @apply bg-slate-800 text-white px-6 py-3 rounded-2xl shadow-2xl text-sm font-bold flex items-center gap-3; }
     </style>
 </head>
@@ -37,7 +34,7 @@
         <header class="flex justify-between items-center mb-6 py-2">
             <div>
                 <h1 class="text-2xl font-black text-blue-900 tracking-tight">Dictée Pro</h1>
-                <p class="text-[10px] text-blue-500 font-black uppercase tracking-[0.15em]">UX Refined Edition</p>
+                <p class="text-[10px] text-blue-500 font-black uppercase tracking-[0.15em]">Foundation Edition (A1-B1)</p>
             </div>
             <button id="settings-trigger" class="bg-white shadow-md p-3 rounded-2xl border border-slate-100 active:rotate-45 transition-transform">⚙️</button>
         </header>
@@ -56,28 +53,27 @@
 
             <div class="grid grid-cols-3 gap-3">
                 <div class="bg-white p-4 rounded-3xl border border-slate-100 shadow-sm text-center">
+                    <p class="text-[9px] font-black text-slate-400 uppercase mb-1">A1</p>
+                    <p id="stats-a1" class="text-lg font-black text-emerald-500">--</p>
+                </div>
+                <div class="bg-white p-4 rounded-3xl border border-slate-100 shadow-sm text-center">
                     <p class="text-[9px] font-black text-slate-400 uppercase mb-1">A2</p>
-                    <p id="stats-a2" class="text-lg font-black text-emerald-500">--</p>
+                    <p id="stats-a2" class="text-lg font-black text-blue-500">--</p>
                 </div>
                 <div class="bg-white p-4 rounded-3xl border border-slate-100 shadow-sm text-center">
                     <p class="text-[9px] font-black text-slate-400 uppercase mb-1">B1</p>
-                    <p id="stats-b1" class="text-lg font-black text-blue-500">--</p>
-                </div>
-                <div class="bg-white p-4 rounded-3xl border border-slate-100 shadow-sm text-center">
-                    <p class="text-[9px] font-black text-slate-400 uppercase mb-1">B2</p>
-                    <p id="stats-b2" class="text-lg font-black text-orange-500">--</p>
+                    <p id="stats-b1" class="text-lg font-black text-orange-500">--</p>
                 </div>
             </div>
 
             <div class="space-y-4 pt-2">
                 <button id="start-dictation" class="w-full flex items-center gap-5 bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm active:bg-blue-50 transition-colors">
                     <div class="bg-emerald-100 text-2xl w-14 h-14 rounded-2xl flex items-center justify-center">🎧</div>
-                    <div class="text-left"><p class="font-black text-slate-800">Start Session</p><p class="text-xs text-slate-500">New dictation batch</p></div>
+                    <div class="text-left"><p class="font-black text-slate-800">Start Session</p><p class="text-xs text-slate-500">Practice listening</p></div>
                 </button>
-
                 <button id="go-review" class="w-full flex items-center gap-5 bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm active:bg-orange-50 transition-colors">
                     <div class="bg-orange-100 text-2xl w-14 h-14 rounded-2xl flex items-center justify-center">🔄</div>
-                    <div class="text-left"><p class="font-black text-slate-800">Review Room</p><p class="text-xs text-slate-500 font-medium"><span id="review-count">0</span> items waiting</p></div>
+                    <div class="text-left"><p class="font-black text-slate-800">Review Room</p><p class="text-xs text-slate-500 font-medium"><span id="review-count">0</span> items</p></div>
                 </button>
             </div>
         </div>
@@ -88,10 +84,10 @@
                 <div id="level-tag" class="inline-block px-4 py-1.5 rounded-full bg-blue-50 text-blue-600 text-[10px] font-black uppercase mb-6 tracking-widest">LEVEL</div>
                 <div class="flex flex-col gap-3 mb-8">
                     <button id="play-btn" class="w-full bg-blue-600 text-white font-black py-6 rounded-3xl shadow-xl active:scale-[0.98] transition-all text-xl">Listen 🔊</button>
-                    <button id="turtle-btn" class="w-full bg-slate-800 text-white font-bold py-4 rounded-2xl text-xs uppercase tracking-widest">Slow Speed 🐢</button>
+                    <button id="turtle-btn" class="w-full bg-slate-800 text-white font-bold py-4 rounded-2xl text-xs uppercase tracking-widest">Slow 🐢</button>
                 </div>
-                <textarea id="user-input" rows="3" placeholder="Tapez la phrase ici..." class="w-full p-6 bg-slate-50 border-2 border-transparent focus:border-blue-500 rounded-[2rem] outline-none mb-6 resize-none font-medium leading-relaxed transition-all"></textarea>
-                <div class="flex justify-center gap-2 mb-8 overflow-x-auto">
+                <textarea id="user-input" rows="3" placeholder="Tapez ici..." class="w-full p-6 bg-slate-50 border-2 border-transparent focus:border-blue-500 rounded-[2rem] outline-none mb-6 resize-none font-medium leading-relaxed"></textarea>
+                <div class="flex justify-center gap-2 mb-8 overflow-x-auto pb-2">
                     <button class="accent-btn">é</button><button class="accent-btn">à</button><button class="accent-btn">è</button>
                     <button class="accent-btn">ê</button><button class="accent-btn">ç</button><button class="accent-btn">ù</button>
                 </div>
@@ -102,15 +98,15 @@
                 <p id="score-display" class="text-6xl font-black text-center mb-6">0%</p>
                 <div class="space-y-6">
                     <div class="p-5 bg-slate-50 rounded-2xl border border-slate-100">
-                        <p class="text-[9px] font-black text-slate-400 uppercase mb-2 tracking-tighter">Correct French</p>
+                        <p class="text-[9px] font-black text-slate-400 uppercase mb-2">French</p>
                         <p id="correct-text" class="text-slate-900 font-bold leading-relaxed"></p>
                     </div>
                     <div class="p-5 bg-blue-50/50 rounded-2xl">
-                        <p class="text-[9px] font-black text-blue-400 uppercase mb-2 tracking-tighter">Translation</p>
+                        <p class="text-[9px] font-black text-blue-400 uppercase mb-2">Translation</p>
                         <p id="translation-text" class="text-blue-700 italic font-medium"></p>
                     </div>
                 </div>
-                <button id="next-btn" class="w-full mt-8 bg-blue-600 text-white font-black py-5 rounded-3xl shadow-lg">Next One →</button>
+                <button id="next-btn" class="w-full mt-8 bg-blue-600 text-white font-black py-5 rounded-3xl shadow-lg">Next →</button>
             </div>
         </div>
 
@@ -119,19 +115,19 @@
             <div class="space-y-8 flex-1">
                 <div>
                     <label class="block text-[10px] font-black text-slate-400 uppercase mb-2 ml-1">Gemini API Key</label>
-                    <input type="password" id="api-key" placeholder="Paste your key..." class="w-full p-5 bg-slate-50 rounded-[1.5rem] outline-none border border-slate-200 focus:border-blue-500 transition-all font-mono text-xs">
+                    <input type="password" id="api-key" placeholder="API Key..." class="w-full p-5 bg-slate-50 rounded-[1.5rem] outline-none border border-slate-200 focus:border-blue-500 font-mono text-xs">
                 </div>
                 <div class="space-y-3">
                     <p class="text-[10px] font-black text-slate-400 uppercase ml-1">Manage Data</p>
-                    <button id="btn-wipe" class="w-full p-5 bg-orange-50 text-orange-700 rounded-2xl font-bold flex justify-between items-center border border-orange-100">Wipe Sentence Vault <span>🗑️</span></button>
-                    <button id="btn-reset" class="w-full p-5 bg-red-50 text-red-700 rounded-2xl font-bold flex justify-between items-center border border-red-100">Reset Proficiency <span>📊</span></button>
+                    <button id="btn-wipe" class="w-full p-5 bg-orange-50 text-orange-700 rounded-2xl font-bold flex justify-between items-center border border-orange-100 active:scale-95 transition-transform">Wipe Vault (Keeps API) <span>🗑️</span></button>
+                    <button id="btn-reset" class="w-full p-5 bg-red-50 text-red-700 rounded-2xl font-bold flex justify-between items-center border border-red-100 active:scale-95 transition-transform">Reset Scores <span>📊</span></button>
                 </div>
             </div>
-            <button id="save-settings" class="w-full bg-blue-600 text-white font-black py-5 rounded-[2rem] shadow-xl">Save & Close</button>
+            <button id="save-settings" class="w-full bg-blue-600 text-white font-black py-5 rounded-[2rem] shadow-xl active:scale-95 transition-transform">Save & Close</button>
         </div>
 
         <footer class="mt-auto py-6 text-center">
-            <p class="text-[9px] font-bold text-slate-300 uppercase tracking-[0.3em]">Version 2.2 • Toronto Edition</p>
+            <p class="text-[9px] font-bold text-slate-300 uppercase tracking-[0.3em]">Version 2.2.1 • A1-B1 Foundation</p>
         </footer>
     </div>
 
@@ -144,7 +140,6 @@
 
             const views = { menu: document.getElementById('view-menu'), dictation: document.getElementById('view-dictation'), settings: document.getElementById('view-settings') };
 
-            // --- UI HELPERS (NO MORE POPUPS!) ---
             const showToast = (msg) => {
                 const toast = document.createElement('div');
                 toast.className = 'toast animate-slide-up';
@@ -163,25 +158,25 @@
             const updateUI = () => {
                 document.getElementById('vault-count').innerText = vault.length;
                 document.getElementById('review-count').innerText = reviewRoom.length;
-                ['A2', 'B1', 'B2'].forEach(lvl => {
+                ['A1', 'A2', 'B1'].forEach(lvl => {
                     const data = history.filter(h => h.level === lvl);
                     const avg = data.length ? Math.round(data.reduce((a, b) => a + b.score, 0) / data.length) + "%" : "--";
-                    document.getElementById(`stats-${lvl.toLowerCase()}`).innerText = avg;
+                    const el = document.getElementById(`stats-${lvl.toLowerCase()}`);
+                    if(el) el.innerText = avg;
                 });
                 localStorage.setItem('french_vault', JSON.stringify(vault));
                 localStorage.setItem('review_vault', JSON.stringify(reviewRoom));
                 localStorage.setItem('study_history', JSON.stringify(history));
             };
 
-            // --- BATCH REFILL ---
             document.getElementById('refill-btn').onclick = async () => {
                 const key = document.getElementById('api-key').value;
                 if(!key) return showToast("Set API Key first!");
                 const btn = document.getElementById('refill-btn');
                 btn.disabled = true; btn.innerText = "Processing...";
 
-                const prompt = `Generate 50 French sentences for TEF/TCF prep (A2-B2). Focus: Daily life, social issues, work. 
-                Output ONLY a JSON array: [{"text": "...", "english": "...", "level": "A2/B1/B2"}]`;
+                const prompt = `Generate 50 French sentences for beginners/intermediate (Levels: A1, A2, B1). 
+                Focus: Daily life and basic exam prep. Output ONLY a JSON array: [{"text": "...", "english": "...", "level": "A1/A2/B1"}]`;
 
                 try {
                     const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${key}`, {
@@ -192,12 +187,11 @@
                     let raw = data.candidates[0].content.parts[0].text.replace(/```json|```/g, "").trim();
                     vault = [...vault, ...JSON.parse(raw)];
                     updateUI();
-                    showToast("Vault Stocked with 50 items!");
-                } catch (e) { showToast("Refresh failed. Check API."); }
+                    showToast("Vault Stocked (A1-B1)!");
+                } catch (e) { showToast("Refresh failed."); }
                 btn.disabled = false; btn.innerText = "Refill Vault";
             };
 
-            // --- DICTATION ENGINE ---
             const setupSentence = (src) => {
                 if(src.length === 0) { showToast("Vault Empty!"); return switchView('menu'); }
                 currentSentence = src[Math.floor(Math.random() * src.length)];
@@ -234,9 +228,10 @@
                 updateUI();
             };
 
-            // --- MODAL / NAV ---
-            document.getElementById('btn-wipe').onclick = () => showModal("Empty Vault?", "This will delete all saved sentences. You will need to refill them.", () => { vault = []; updateUI(); showToast("Vault Wiped."); });
-            document.getElementById('btn-reset').onclick = () => showModal("Reset Stats?", "This will clear your proficiency percentages forever.", () => { history = []; updateUI(); showToast("Stats Reset."); });
+            // SURGICAL WIPE (Ignores API Key)
+            document.getElementById('btn-wipe').onclick = () => showModal("Wipe Vault?", "Clears sentences but keeps your API key safe.", () => { vault = []; updateUI(); showToast("Vault Cleared."); });
+            document.getElementById('btn-reset').onclick = () => showModal("Reset Scores?", "Clears proficiency stats only.", () => { history = []; updateUI(); showToast("Stats Reset."); });
+            
             document.getElementById('modal-confirm').onclick = () => { modalAction(); document.getElementById('modal-overlay').classList.add('hidden'); };
             document.getElementById('modal-cancel').onclick = () => document.getElementById('modal-overlay').classList.add('hidden');
 
