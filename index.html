@@ -3,140 +3,136 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>French Learning Suite v2.1.1</title>
+    <title>Dictée Pro v2.2</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        .accent-btn { @apply bg-slate-200 p-2 rounded-lg text-sm font-bold w-10 h-10 flex items-center justify-center active:bg-blue-500 active:text-white transition-colors; }
+        .accent-btn { @apply bg-slate-100 p-2 rounded-xl text-sm font-bold w-12 h-12 flex items-center justify-center active:bg-blue-600 active:text-white transition-all shadow-sm; }
         ::-webkit-scrollbar { display: none; }
+        
+        /* Smooth Slide Animations */
+        @keyframes slideUp { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        .animate-slide-up { animation: slideUp 0.3s ease-out; }
+        
+        .toast { position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%); z-index: 100; @apply bg-slate-800 text-white px-6 py-3 rounded-2xl shadow-2xl text-sm font-bold flex items-center gap-3; }
     </style>
 </head>
-<body class="bg-slate-50 min-h-screen font-sans text-slate-800">
+<body class="bg-slate-50 min-h-screen font-sans text-slate-900 select-none">
+
+    <div id="toast-container"></div>
+
+    <div id="modal-overlay" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[60] flex items-center justify-center p-6">
+        <div class="bg-white w-full max-w-xs rounded-[2.5rem] p-8 shadow-2xl animate-slide-up">
+            <h3 id="modal-title" class="text-xl font-black text-slate-900 mb-2 text-center">Are you sure?</h3>
+            <p id="modal-text" class="text-sm text-slate-500 mb-8 text-center leading-relaxed font-medium"></p>
+            <div class="flex flex-col gap-3">
+                <button id="modal-confirm" class="w-full bg-red-500 text-white font-bold py-4 rounded-2xl shadow-lg active:scale-95 transition-transform">Yes, Proceed</button>
+                <button id="modal-cancel" class="w-full bg-slate-100 text-slate-500 font-bold py-4 rounded-2xl active:scale-95 transition-transform">Cancel</button>
+            </div>
+        </div>
+    </div>
 
     <div id="app" class="max-w-md mx-auto min-h-screen flex flex-col p-4">
         
-        <header class="flex justify-between items-center mb-6">
+        <header class="flex justify-between items-center mb-6 py-2">
             <div>
                 <h1 class="text-2xl font-black text-blue-900 tracking-tight">Dictée Pro</h1>
-                <p class="text-[10px] text-blue-500 font-bold uppercase tracking-widest">v2.1.1 • Bilingual Edition</p>
+                <p class="text-[10px] text-blue-500 font-black uppercase tracking-[0.15em]">UX Refined Edition</p>
             </div>
-            <button id="settings-trigger" class="bg-white shadow-sm p-3 rounded-2xl border border-slate-200">⚙️</button>
+            <button id="settings-trigger" class="bg-white shadow-md p-3 rounded-2xl border border-slate-100 active:rotate-45 transition-transform">⚙️</button>
         </header>
 
-        <div id="view-menu" class="space-y-4">
-            <div class="bg-blue-600 rounded-3xl p-6 text-white shadow-xl relative overflow-hidden mb-4">
+        <div id="view-menu" class="space-y-5">
+            <div class="bg-blue-600 rounded-[2.5rem] p-8 text-white shadow-xl relative overflow-hidden mb-2">
                 <div class="relative z-10">
-                    <p class="text-xs font-bold uppercase opacity-80 mb-1">Vault Status</p>
-                    <h2 class="text-3xl font-black mb-4"><span id="vault-count">0</span> Sentences</h2>
-                    <button id="refill-btn" class="bg-white text-blue-600 px-6 py-2 rounded-full font-bold text-sm shadow-lg active:scale-95 transition-transform">
-                        Refill Vault (Large Batch)
+                    <p class="text-xs font-bold uppercase opacity-70 mb-1">Sentence Vault</p>
+                    <h2 class="text-4xl font-black mb-6 tracking-tight"><span id="vault-count">0</span> Items</h2>
+                    <button id="refill-btn" class="bg-white text-blue-700 px-8 py-3 rounded-2xl font-black text-sm shadow-lg active:scale-95 transition-all">
+                        Refill Vault
                     </button>
                 </div>
-                <div class="absolute -right-4 -bottom-4 text-9xl opacity-10">🇫🇷</div>
+                <div class="absolute -right-6 -bottom-6 text-[10rem] opacity-10 rotate-12">🇫🇷</div>
             </div>
 
-            <p class="text-[10px] font-black text-slate-400 uppercase ml-2 mb-1">Your Proficiency</p>
-            <div class="grid grid-cols-3 gap-2 mb-6">
-                <div class="bg-white p-3 rounded-2xl border border-slate-200 text-center">
-                    <p class="text-[9px] font-bold text-slate-400 uppercase">A2</p>
-                    <p id="stats-a2" class="text-sm font-black text-emerald-500">--</p>
+            <div class="grid grid-cols-3 gap-3">
+                <div class="bg-white p-4 rounded-3xl border border-slate-100 shadow-sm text-center">
+                    <p class="text-[9px] font-black text-slate-400 uppercase mb-1">A2</p>
+                    <p id="stats-a2" class="text-lg font-black text-emerald-500">--</p>
                 </div>
-                <div class="bg-white p-3 rounded-2xl border border-slate-200 text-center">
-                    <p class="text-[9px] font-bold text-slate-400 uppercase">B1</p>
-                    <p id="stats-b1" class="text-sm font-black text-blue-500">--</p>
+                <div class="bg-white p-4 rounded-3xl border border-slate-100 shadow-sm text-center">
+                    <p class="text-[9px] font-black text-slate-400 uppercase mb-1">B1</p>
+                    <p id="stats-b1" class="text-lg font-black text-blue-500">--</p>
                 </div>
-                <div class="bg-white p-3 rounded-2xl border border-slate-200 text-center">
-                    <p class="text-[9px] font-bold text-slate-400 uppercase">B2</p>
-                    <p id="stats-b2" class="text-sm font-black text-orange-500">--</p>
+                <div class="bg-white p-4 rounded-3xl border border-slate-100 shadow-sm text-center">
+                    <p class="text-[9px] font-black text-slate-400 uppercase mb-1">B2</p>
+                    <p id="stats-b2" class="text-lg font-black text-orange-500">--</p>
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 gap-4">
-                <button id="start-dictation" class="flex items-center gap-4 bg-white p-5 rounded-3xl border border-slate-200 shadow-sm active:bg-slate-50">
-                    <div class="bg-emerald-100 p-3 rounded-2xl text-2xl">🎧</div>
-                    <div class="text-left">
-                        <p class="font-bold text-slate-800">Start Dictation</p>
-                        <p class="text-xs text-slate-500">Practice listening & spelling</p>
-                    </div>
+            <div class="space-y-4 pt-2">
+                <button id="start-dictation" class="w-full flex items-center gap-5 bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm active:bg-blue-50 transition-colors">
+                    <div class="bg-emerald-100 text-2xl w-14 h-14 rounded-2xl flex items-center justify-center">🎧</div>
+                    <div class="text-left"><p class="font-black text-slate-800">Start Session</p><p class="text-xs text-slate-500">New dictation batch</p></div>
                 </button>
 
-                <button id="go-review" class="flex items-center gap-4 bg-white p-5 rounded-3xl border border-slate-200 shadow-sm active:bg-slate-50">
-                    <div class="bg-orange-100 p-3 rounded-2xl text-2xl">🔄</div>
-                    <div class="text-left">
-                        <p class="font-bold text-slate-800">Review Room</p>
-                        <p class="text-xs text-slate-500"><span id="review-count">0</span> mistakes to fix</p>
-                    </div>
+                <button id="go-review" class="w-full flex items-center gap-5 bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm active:bg-orange-50 transition-colors">
+                    <div class="bg-orange-100 text-2xl w-14 h-14 rounded-2xl flex items-center justify-center">🔄</div>
+                    <div class="text-left"><p class="font-black text-slate-800">Review Room</p><p class="text-xs text-slate-500 font-medium"><span id="review-count">0</span> items waiting</p></div>
                 </button>
             </div>
         </div>
 
         <div id="view-dictation" class="hidden space-y-4 flex-1">
-            <button class="exit-view text-xs font-bold text-blue-600 uppercase mb-2">← Back to Menu</button>
-            
-            <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 text-center">
-                <div id="level-tag" class="inline-block px-3 py-1 rounded-full bg-blue-100 text-blue-700 text-[10px] font-black uppercase mb-4">Level</div>
-                
-                <div class="flex flex-col gap-3 mb-6">
-                    <button id="play-btn" class="w-full bg-blue-600 text-white font-bold py-5 rounded-2xl shadow-lg text-xl">Listen 🔊</button>
-                    <button id="turtle-btn" class="w-full bg-amber-400 text-white font-bold py-3 rounded-2xl text-sm">Slow 🐢</button>
+            <button class="exit-view text-xs font-black text-blue-600 uppercase mb-2 tracking-widest flex items-center gap-2">← Back</button>
+            <div class="bg-white p-8 rounded-[3rem] shadow-sm border border-slate-100 text-center">
+                <div id="level-tag" class="inline-block px-4 py-1.5 rounded-full bg-blue-50 text-blue-600 text-[10px] font-black uppercase mb-6 tracking-widest">LEVEL</div>
+                <div class="flex flex-col gap-3 mb-8">
+                    <button id="play-btn" class="w-full bg-blue-600 text-white font-black py-6 rounded-3xl shadow-xl active:scale-[0.98] transition-all text-xl">Listen 🔊</button>
+                    <button id="turtle-btn" class="w-full bg-slate-800 text-white font-bold py-4 rounded-2xl text-xs uppercase tracking-widest">Slow Speed 🐢</button>
                 </div>
-
-                <textarea id="user-input" rows="3" placeholder="Tapez ici..." class="w-full p-4 border-2 border-slate-200 rounded-2xl focus:border-blue-500 outline-none mb-2 resize-none"></textarea>
-                
-                <div class="flex justify-center gap-1 mb-4 overflow-x-auto pb-2">
+                <textarea id="user-input" rows="3" placeholder="Tapez la phrase ici..." class="w-full p-6 bg-slate-50 border-2 border-transparent focus:border-blue-500 rounded-[2rem] outline-none mb-6 resize-none font-medium leading-relaxed transition-all"></textarea>
+                <div class="flex justify-center gap-2 mb-8 overflow-x-auto">
                     <button class="accent-btn">é</button><button class="accent-btn">à</button><button class="accent-btn">è</button>
                     <button class="accent-btn">ê</button><button class="accent-btn">ç</button><button class="accent-btn">ù</button>
                 </div>
-
-                <button id="check-btn" class="w-full bg-slate-800 text-white font-bold py-4 rounded-2xl uppercase tracking-widest">Verify</button>
+                <button id="check-btn" class="w-full bg-blue-600 text-white font-black py-5 rounded-3xl uppercase tracking-widest shadow-lg">Verify</button>
             </div>
 
-            <div id="result-area" class="hidden bg-white p-6 rounded-3xl border-2 border-slate-100">
-                <p id="score-display" class="text-5xl font-black text-center mb-4">0%</p>
-                
-                <div class="space-y-4">
-                    <div>
-                        <p class="text-[9px] font-black text-slate-400 uppercase mb-1">French Correct:</p>
-                        <p id="correct-text" class="text-slate-800 font-bold text-sm leading-relaxed bg-slate-50 p-3 rounded-xl border border-slate-100"></p>
+            <div id="result-area" class="hidden bg-white p-8 rounded-[3rem] border border-slate-200 shadow-2xl">
+                <p id="score-display" class="text-6xl font-black text-center mb-6">0%</p>
+                <div class="space-y-6">
+                    <div class="p-5 bg-slate-50 rounded-2xl border border-slate-100">
+                        <p class="text-[9px] font-black text-slate-400 uppercase mb-2 tracking-tighter">Correct French</p>
+                        <p id="correct-text" class="text-slate-900 font-bold leading-relaxed"></p>
                     </div>
-                    <div>
-                        <p class="text-[9px] font-black text-blue-400 uppercase mb-1">English Translation:</p>
-                        <p id="translation-text" class="text-blue-600 italic text-sm leading-relaxed"></p>
+                    <div class="p-5 bg-blue-50/50 rounded-2xl">
+                        <p class="text-[9px] font-black text-blue-400 uppercase mb-2 tracking-tighter">Translation</p>
+                        <p id="translation-text" class="text-blue-700 italic font-medium"></p>
                     </div>
                 </div>
-
-                <button id="next-btn" class="w-full mt-6 bg-blue-50 text-blue-600 font-bold py-3 rounded-xl">Next Sentence →</button>
+                <button id="next-btn" class="w-full mt-8 bg-blue-600 text-white font-black py-5 rounded-3xl shadow-lg">Next One →</button>
             </div>
         </div>
 
-        <div id="view-settings" class="hidden fixed inset-0 bg-white z-50 p-6 flex flex-col">
-            <h2 class="text-2xl font-black text-blue-900 mb-6">Settings</h2>
-            <div class="space-y-6 flex-1">
+        <div id="view-settings" class="hidden fixed inset-0 bg-white z-50 p-8 flex flex-col">
+            <h2 class="text-3xl font-black text-slate-900 mb-8">Settings</h2>
+            <div class="space-y-8 flex-1">
                 <div>
-                    <label class="block text-[10px] font-black text-slate-400 uppercase mb-1">Gemini API Key</label>
-                    <input type="password" id="api-key" placeholder="Enter Key..." class="w-full p-4 bg-slate-100 rounded-2xl outline-none border border-slate-200">
+                    <label class="block text-[10px] font-black text-slate-400 uppercase mb-2 ml-1">Gemini API Key</label>
+                    <input type="password" id="api-key" placeholder="Paste your key..." class="w-full p-5 bg-slate-50 rounded-[1.5rem] outline-none border border-slate-200 focus:border-blue-500 transition-all font-mono text-xs">
                 </div>
-                
                 <div class="space-y-3">
-                    <p class="text-[10px] font-black text-slate-400 uppercase">Data Management</p>
-                    <button id="wipe-vault" class="w-full text-left p-4 bg-orange-50 text-orange-700 rounded-2xl border border-orange-100 flex justify-between items-center">
-                        <span class="font-bold">Wipe Sentence Vault</span>
-                        <span class="text-xs">🗑️</span>
-                    </button>
-                    
-                    <button id="clear-stats" class="w-full text-left p-4 bg-red-50 text-red-700 rounded-2xl border border-red-100 flex justify-between items-center">
-                        <span class="font-bold">Reset Study Stats</span>
-                        <span class="text-xs">📊</span>
-                    </button>
+                    <p class="text-[10px] font-black text-slate-400 uppercase ml-1">Manage Data</p>
+                    <button id="btn-wipe" class="w-full p-5 bg-orange-50 text-orange-700 rounded-2xl font-bold flex justify-between items-center border border-orange-100">Wipe Sentence Vault <span>🗑️</span></button>
+                    <button id="btn-reset" class="w-full p-5 bg-red-50 text-red-700 rounded-2xl font-bold flex justify-between items-center border border-red-100">Reset Proficiency <span>📊</span></button>
                 </div>
             </div>
-            <button id="save-settings" class="w-full bg-blue-600 text-white font-bold py-4 rounded-2xl">Save & Close</button>
+            <button id="save-settings" class="w-full bg-blue-600 text-white font-black py-5 rounded-[2rem] shadow-xl">Save & Close</button>
         </div>
 
-        <footer class="mt-auto py-4 text-center">
-            <p id="version-tag" class="text-[10px] font-bold text-slate-300 uppercase tracking-[0.2em]">Version 2.1.1 • Build 2026.03.09</p>
+        <footer class="mt-auto py-6 text-center">
+            <p class="text-[9px] font-bold text-slate-300 uppercase tracking-[0.3em]">Version 2.2 • Toronto Edition</p>
         </footer>
-
     </div>
 
     <script>
@@ -144,69 +140,67 @@
             let vault = JSON.parse(localStorage.getItem('french_vault') || '[]');
             let reviewRoom = JSON.parse(localStorage.getItem('review_vault') || '[]');
             let history = JSON.parse(localStorage.getItem('study_history') || '[]');
-            let currentSentence = null;
-            let isReviewMode = false;
+            let currentSentence = null, isReviewMode = false, modalAction = null;
 
-            const views = { 
-                menu: document.getElementById('view-menu'), 
-                dictation: document.getElementById('view-dictation'), 
-                settings: document.getElementById('view-settings') 
+            const views = { menu: document.getElementById('view-menu'), dictation: document.getElementById('view-dictation'), settings: document.getElementById('view-settings') };
+
+            // --- UI HELPERS (NO MORE POPUPS!) ---
+            const showToast = (msg) => {
+                const toast = document.createElement('div');
+                toast.className = 'toast animate-slide-up';
+                toast.innerHTML = `<span>✨</span> ${msg}`;
+                document.getElementById('toast-container').appendChild(toast);
+                setTimeout(() => toast.remove(), 3000);
+            };
+
+            const showModal = (title, text, action) => {
+                document.getElementById('modal-title').innerText = title;
+                document.getElementById('modal-text').innerText = text;
+                modalAction = action;
+                document.getElementById('modal-overlay').classList.remove('hidden');
             };
 
             const updateUI = () => {
                 document.getElementById('vault-count').innerText = vault.length;
                 document.getElementById('review-count').innerText = reviewRoom.length;
-                
-                // Calculate Stats per Level
                 ['A2', 'B1', 'B2'].forEach(lvl => {
-                    const levelData = history.filter(h => h.level === lvl);
-                    const avg = levelData.length ? Math.round(levelData.reduce((a, b) => a + b.score, 0) / levelData.length) + "%" : "--";
+                    const data = history.filter(h => h.level === lvl);
+                    const avg = data.length ? Math.round(data.reduce((a, b) => a + b.score, 0) / data.length) + "%" : "--";
                     document.getElementById(`stats-${lvl.toLowerCase()}`).innerText = avg;
                 });
-
                 localStorage.setItem('french_vault', JSON.stringify(vault));
                 localStorage.setItem('review_vault', JSON.stringify(reviewRoom));
                 localStorage.setItem('study_history', JSON.stringify(history));
             };
 
-            const switchView = (target) => {
-                Object.values(views).forEach(v => v.classList.add('hidden'));
-                views[target].classList.remove('hidden');
-            };
-
-            // REFILL VAULT LOGIC
+            // --- BATCH REFILL ---
             document.getElementById('refill-btn').onclick = async () => {
                 const key = document.getElementById('api-key').value;
-                if(!key) return alert("Please set API Key in settings!");
+                if(!key) return showToast("Set API Key first!");
                 const btn = document.getElementById('refill-btn');
-                btn.disabled = true; btn.innerText = "Generating 50 items...";
+                btn.disabled = true; btn.innerText = "Processing...";
 
-                const prompt = `Generate 50 French sentences for TEF/TCF prep (A2-B2). 
-                Focus: Social issues, daily life, work, and environment. 
-                Output ONLY a JSON array: [{"text": "French", "english": "English", "level": "A2/B1/B2"}]`;
+                const prompt = `Generate 50 French sentences for TEF/TCF prep (A2-B2). Focus: Daily life, social issues, work. 
+                Output ONLY a JSON array: [{"text": "...", "english": "...", "level": "A2/B1/B2"}]`;
 
                 try {
                     const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${key}`, {
-                        method: 'POST',
-                        headers: {'Content-Type': 'application/json'},
+                        method: 'POST', headers: {'Content-Type': 'application/json'},
                         body: JSON.stringify({ contents: [{ parts: [{ text: prompt }]}] })
                     });
                     const data = await resp.json();
-                    let rawText = data.candidates[0].content.parts[0].text.replace(/```json|```/g, "").trim();
-                    vault = [...vault, ...JSON.parse(rawText)];
+                    let raw = data.candidates[0].content.parts[0].text.replace(/```json|```/g, "").trim();
+                    vault = [...vault, ...JSON.parse(raw)];
                     updateUI();
-                    alert("Vault Refilled with bilingual sentences!");
-                } catch (e) { alert("Error: API check failed."); }
-                btn.disabled = false; btn.innerText = "Refill Vault (Large Batch)";
+                    showToast("Vault Stocked with 50 items!");
+                } catch (e) { showToast("Refresh failed. Check API."); }
+                btn.disabled = false; btn.innerText = "Refill Vault";
             };
 
-            const setupSentence = (source) => {
-                if(source.length === 0) {
-                    alert("Queue empty!");
-                    return switchView('menu');
-                }
-                const idx = Math.floor(Math.random() * source.length);
-                currentSentence = source[idx];
+            // --- DICTATION ENGINE ---
+            const setupSentence = (src) => {
+                if(src.length === 0) { showToast("Vault Empty!"); return switchView('menu'); }
+                currentSentence = src[Math.floor(Math.random() * src.length)];
                 document.getElementById('level-tag').innerText = currentSentence.level;
                 document.getElementById('user-input').value = "";
                 document.getElementById('result-area').classList.add('hidden');
@@ -214,64 +208,51 @@
                 playAudio();
             };
 
-            const playAudio = (rate = 0.85) => {
+            const playAudio = (r = 0.85) => {
                 window.speechSynthesis.cancel();
                 const u = new SpeechSynthesisUtterance(currentSentence.text);
-                u.lang = 'fr-FR'; u.rate = rate;
-                window.speechSynthesis.speak(u);
-            };
-
-            // DATA MANAGEMENT ACTIONS
-            document.getElementById('wipe-vault').onclick = () => {
-                if(confirm("Wipe all sentences? You'll need to refill to practice.")) {
-                    vault = []; updateUI(); alert("Vault wiped.");
-                }
-            };
-
-            document.getElementById('clear-stats').onclick = () => {
-                if(confirm("Clear study history?")) {
-                    history = []; updateUI(); alert("Stats reset.");
-                }
+                u.lang = 'fr-FR'; u.rate = r; window.speechSynthesis.speak(u);
             };
 
             document.getElementById('check-btn').onclick = () => {
                 const input = document.getElementById('user-input').value.toLowerCase().replace(/[.,!?;:]/g, "").trim();
                 const target = currentSentence.text.toLowerCase().replace(/[.,!?;:]/g, "").trim();
-                
-                const wordsT = target.split(" ");
-                const wordsI = input.split(" ");
-                let m = 0;
-                wordsT.forEach((w, i) => { if(w === wordsI[i]) m++; });
+                const wordsT = target.split(" "), wordsI = input.split(" ");
+                let m = 0; wordsT.forEach((w, i) => { if(w === wordsI[i]) m++; });
                 const score = Math.round((m / wordsT.length) * 100);
 
-                history.push({ level: currentSentence.level, score: score, date: new Date().toISOString() });
-
+                history.push({ level: currentSentence.level, score, date: new Date().toISOString() });
                 document.getElementById('result-area').classList.remove('hidden');
                 document.getElementById('check-btn').classList.add('hidden');
                 document.getElementById('score-display').innerText = score + "%";
+                document.getElementById('score-display').className = `text-6xl font-black text-center mb-6 ${score >= 80 ? 'text-emerald-500' : 'text-orange-500'}`;
                 document.getElementById('correct-text').innerText = currentSentence.text;
-                document.getElementById('translation-text').innerText = currentSentence.english || "No translation found.";
+                document.getElementById('translation-text').innerText = currentSentence.english || "No translation.";
                 
-                if(isReviewMode) {
-                    if(score >= 90) reviewRoom = reviewRoom.filter(s => s.text !== currentSentence.text);
-                } else {
-                    vault = vault.filter(s => s.text !== currentSentence.text);
-                    if(score < 75) reviewRoom.push(currentSentence);
-                }
+                if(isReviewMode) { if(score >= 90) reviewRoom = reviewRoom.filter(s => s.text !== currentSentence.text); }
+                else { vault = vault.filter(s => s.text !== currentSentence.text); if(score < 75) reviewRoom.push(currentSentence); }
                 updateUI();
             };
 
-            // NAVIGATION & ACCENTS
+            // --- MODAL / NAV ---
+            document.getElementById('btn-wipe').onclick = () => showModal("Empty Vault?", "This will delete all saved sentences. You will need to refill them.", () => { vault = []; updateUI(); showToast("Vault Wiped."); });
+            document.getElementById('btn-reset').onclick = () => showModal("Reset Stats?", "This will clear your proficiency percentages forever.", () => { history = []; updateUI(); showToast("Stats Reset."); });
+            document.getElementById('modal-confirm').onclick = () => { modalAction(); document.getElementById('modal-overlay').classList.add('hidden'); };
+            document.getElementById('modal-cancel').onclick = () => document.getElementById('modal-overlay').classList.add('hidden');
+
+            const switchView = (t) => { Object.values(views).forEach(v => v.classList.add('hidden')); views[t].classList.remove('hidden'); };
             document.getElementById('start-dictation').onclick = () => { isReviewMode = false; switchView('dictation'); setupSentence(vault); };
             document.getElementById('go-review').onclick = () => { isReviewMode = true; switchView('dictation'); setupSentence(reviewRoom); };
             document.getElementById('next-btn').onclick = () => setupSentence(isReviewMode ? reviewRoom : vault);
             document.getElementById('play-btn').onclick = () => playAudio(0.85);
             document.getElementById('turtle-btn').onclick = () => playAudio(0.55);
             document.getElementById('settings-trigger').onclick = () => switchView('settings');
-            document.getElementById('save-settings').onclick = () => { localStorage.setItem('gemini_api_key', document.getElementById('api-key').value); switchView('menu'); };
+            document.getElementById('save-settings').onclick = () => { localStorage.setItem('gemini_api_key', document.getElementById('api-key').value); switchView('menu'); showToast("Settings Saved"); };
             document.querySelectorAll('.exit-view').forEach(b => b.onclick = () => switchView('menu'));
             document.querySelectorAll('.accent-btn').forEach(b => b.onclick = () => { document.getElementById('user-input').value += b.innerText; document.getElementById('user-input').focus(); });
 
+            const savedKey = localStorage.getItem('gemini_api_key');
+            if(savedKey) document.getElementById('api-key').value = savedKey;
             updateUI();
         });
     </script>
