@@ -3,11 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>French Learning Suite v2.1</title>
+    <title>French Learning Suite v2.1.1</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         .accent-btn { @apply bg-slate-200 p-2 rounded-lg text-sm font-bold w-10 h-10 flex items-center justify-center active:bg-blue-500 active:text-white transition-colors; }
+        ::-webkit-scrollbar { display: none; }
     </style>
 </head>
 <body class="bg-slate-50 min-h-screen font-sans text-slate-800">
@@ -17,7 +18,7 @@
         <header class="flex justify-between items-center mb-6">
             <div>
                 <h1 class="text-2xl font-black text-blue-900 tracking-tight">Dictée Pro</h1>
-                <p class="text-[10px] text-blue-500 font-bold uppercase tracking-widest">Analytics Edition</p>
+                <p class="text-[10px] text-blue-500 font-bold uppercase tracking-widest">v2.1.1 • Bilingual Edition</p>
             </div>
             <button id="settings-trigger" class="bg-white shadow-sm p-3 rounded-2xl border border-slate-200">⚙️</button>
         </header>
@@ -110,18 +111,30 @@
 
         <div id="view-settings" class="hidden fixed inset-0 bg-white z-50 p-6 flex flex-col">
             <h2 class="text-2xl font-black text-blue-900 mb-6">Settings</h2>
-            <div class="space-y-4 flex-1">
+            <div class="space-y-6 flex-1">
                 <div>
                     <label class="block text-[10px] font-black text-slate-400 uppercase mb-1">Gemini API Key</label>
-                    <input type="password" id="api-key" placeholder="Enter Key..." class="w-full p-4 bg-slate-100 rounded-2xl outline-none">
+                    <input type="password" id="api-key" placeholder="Enter Key..." class="w-full p-4 bg-slate-100 rounded-2xl outline-none border border-slate-200">
                 </div>
-                <button id="clear-stats" class="text-xs text-red-500 font-bold underline">Clear All Stats & History</button>
+                
+                <div class="space-y-3">
+                    <p class="text-[10px] font-black text-slate-400 uppercase">Data Management</p>
+                    <button id="wipe-vault" class="w-full text-left p-4 bg-orange-50 text-orange-700 rounded-2xl border border-orange-100 flex justify-between items-center">
+                        <span class="font-bold">Wipe Sentence Vault</span>
+                        <span class="text-xs">🗑️</span>
+                    </button>
+                    
+                    <button id="clear-stats" class="w-full text-left p-4 bg-red-50 text-red-700 rounded-2xl border border-red-100 flex justify-between items-center">
+                        <span class="font-bold">Reset Study Stats</span>
+                        <span class="text-xs">📊</span>
+                    </button>
+                </div>
             </div>
             <button id="save-settings" class="w-full bg-blue-600 text-white font-bold py-4 rounded-2xl">Save & Close</button>
         </div>
 
         <footer class="mt-auto py-4 text-center">
-            <p class="text-[10px] font-bold text-slate-300 uppercase tracking-[0.2em]">Version 2.1 • Build 2026.03.09</p>
+            <p id="version-tag" class="text-[10px] font-bold text-slate-300 uppercase tracking-[0.2em]">Version 2.1.1 • Build 2026.03.09</p>
         </footer>
 
     </div>
@@ -134,13 +147,17 @@
             let currentSentence = null;
             let isReviewMode = false;
 
-            const views = { menu: document.getElementById('view-menu'), dictation: document.getElementById('view-dictation'), settings: document.getElementById('view-settings') };
+            const views = { 
+                menu: document.getElementById('view-menu'), 
+                dictation: document.getElementById('view-dictation'), 
+                settings: document.getElementById('view-settings') 
+            };
 
             const updateUI = () => {
                 document.getElementById('vault-count').innerText = vault.length;
                 document.getElementById('review-count').innerText = reviewRoom.length;
                 
-                // Calculate Level Stats
+                // Calculate Stats per Level
                 ['A2', 'B1', 'B2'].forEach(lvl => {
                     const levelData = history.filter(h => h.level === lvl);
                     const avg = levelData.length ? Math.round(levelData.reduce((a, b) => a + b.score, 0) / levelData.length) + "%" : "--";
@@ -157,16 +174,16 @@
                 views[target].classList.remove('hidden');
             };
 
-            // REFILL LOGIC (Updated for English Translation)
+            // REFILL VAULT LOGIC
             document.getElementById('refill-btn').onclick = async () => {
                 const key = document.getElementById('api-key').value;
-                if(!key) return alert("Please set API Key!");
+                if(!key) return alert("Please set API Key in settings!");
                 const btn = document.getElementById('refill-btn');
-                btn.disabled = true; btn.innerText = "Processing 50 Sentences...";
+                btn.disabled = true; btn.innerText = "Generating 50 items...";
 
-                const prompt = `Generate 50 French sentences for TEF/TCF exam prep (A2-B2 levels). 
-                Themes: Daily life, transport, work, environment. 
-                Return ONLY a JSON array with this structure: [{"text": "French sentence", "english": "English translation", "level": "A2/B1/B2"}].`;
+                const prompt = `Generate 50 French sentences for TEF/TCF prep (A2-B2). 
+                Focus: Social issues, daily life, work, and environment. 
+                Output ONLY a JSON array: [{"text": "French", "english": "English", "level": "A2/B1/B2"}]`;
 
                 try {
                     const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${key}`, {
@@ -178,14 +195,18 @@
                     let rawText = data.candidates[0].content.parts[0].text.replace(/```json|```/g, "").trim();
                     vault = [...vault, ...JSON.parse(rawText)];
                     updateUI();
-                    alert("Vault Stocked!");
-                } catch (e) { alert("Error refilling vault."); }
+                    alert("Vault Refilled with bilingual sentences!");
+                } catch (e) { alert("Error: API check failed."); }
                 btn.disabled = false; btn.innerText = "Refill Vault (Large Batch)";
             };
 
             const setupSentence = (source) => {
-                if(source.length === 0) return switchView('menu');
-                currentSentence = source[Math.floor(Math.random() * source.length)];
+                if(source.length === 0) {
+                    alert("Queue empty!");
+                    return switchView('menu');
+                }
+                const idx = Math.floor(Math.random() * source.length);
+                currentSentence = source[idx];
                 document.getElementById('level-tag').innerText = currentSentence.level;
                 document.getElementById('user-input').value = "";
                 document.getElementById('result-area').classList.add('hidden');
@@ -200,25 +221,36 @@
                 window.speechSynthesis.speak(u);
             };
 
+            // DATA MANAGEMENT ACTIONS
+            document.getElementById('wipe-vault').onclick = () => {
+                if(confirm("Wipe all sentences? You'll need to refill to practice.")) {
+                    vault = []; updateUI(); alert("Vault wiped.");
+                }
+            };
+
+            document.getElementById('clear-stats').onclick = () => {
+                if(confirm("Clear study history?")) {
+                    history = []; updateUI(); alert("Stats reset.");
+                }
+            };
+
             document.getElementById('check-btn').onclick = () => {
                 const input = document.getElementById('user-input').value.toLowerCase().replace(/[.,!?;:]/g, "").trim();
                 const target = currentSentence.text.toLowerCase().replace(/[.,!?;:]/g, "").trim();
                 
-                const wordsTarget = target.split(" ");
-                const wordsInput = input.split(" ");
-                let matches = 0;
-                wordsTarget.forEach((w, i) => { if(w === wordsInput[i]) matches++; });
-                const score = Math.round((matches / wordsTarget.length) * 100);
+                const wordsT = target.split(" ");
+                const wordsI = input.split(" ");
+                let m = 0;
+                wordsT.forEach((w, i) => { if(w === wordsI[i]) m++; });
+                const score = Math.round((m / wordsT.length) * 100);
 
-                // Save to History for Analytics
                 history.push({ level: currentSentence.level, score: score, date: new Date().toISOString() });
 
-                // UI Display
                 document.getElementById('result-area').classList.remove('hidden');
                 document.getElementById('check-btn').classList.add('hidden');
                 document.getElementById('score-display').innerText = score + "%";
                 document.getElementById('correct-text').innerText = currentSentence.text;
-                document.getElementById('translation-text').innerText = currentSentence.english || "Translation not available (Refresh vault for translations)";
+                document.getElementById('translation-text').innerText = currentSentence.english || "No translation found.";
                 
                 if(isReviewMode) {
                     if(score >= 90) reviewRoom = reviewRoom.filter(s => s.text !== currentSentence.text);
@@ -229,21 +261,17 @@
                 updateUI();
             };
 
-            // Boilerplate Bindings
+            // NAVIGATION & ACCENTS
             document.getElementById('start-dictation').onclick = () => { isReviewMode = false; switchView('dictation'); setupSentence(vault); };
             document.getElementById('go-review').onclick = () => { isReviewMode = true; switchView('dictation'); setupSentence(reviewRoom); };
             document.getElementById('next-btn').onclick = () => setupSentence(isReviewMode ? reviewRoom : vault);
             document.getElementById('play-btn').onclick = () => playAudio(0.85);
             document.getElementById('turtle-btn').onclick = () => playAudio(0.55);
-            document.querySelectorAll('.exit-view').forEach(b => b.onclick = () => switchView('menu'));
             document.getElementById('settings-trigger').onclick = () => switchView('settings');
             document.getElementById('save-settings').onclick = () => { localStorage.setItem('gemini_api_key', document.getElementById('api-key').value); switchView('menu'); };
-            document.getElementById('clear-stats').onclick = () => { if(confirm("Clear all history?")) { history = []; updateUI(); } };
+            document.querySelectorAll('.exit-view').forEach(b => b.onclick = () => switchView('menu'));
             document.querySelectorAll('.accent-btn').forEach(b => b.onclick = () => { document.getElementById('user-input').value += b.innerText; document.getElementById('user-input').focus(); });
 
-            // Initial load
-            const savedKey = localStorage.getItem('gemini_api_key');
-            if(savedKey) document.getElementById('api-key').value = savedKey;
             updateUI();
         });
     </script>
