@@ -3,197 +3,281 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>French Dictation</title>
+    <title>French Learning Suite</title>
     
     <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/197/197560.png">
     <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/197/197560.png">
     <link rel="manifest" href="manifest.json">
-    
-    <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
-    <meta name="theme-color" content="#2563eb">
-    
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-slate-100 min-h-screen flex flex-col items-center p-4 font-sans text-slate-800">
+    <meta name="theme-color" content="#1e40af">
 
-    <div class="w-full max-w-md bg-white rounded-3xl shadow-xl p-6 mt-2 border border-slate-200 relative">
-        <header class="flex justify-between items-center mb-4">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .accent-btn { @apply bg-slate-200 p-2 rounded-lg text-sm font-bold w-10 h-10 flex items-center justify-center active:bg-blue-500 active:text-white transition-colors; }
+    </style>
+</head>
+<body class="bg-slate-50 min-h-screen font-sans text-slate-800">
+
+    <div id="app" class="max-w-md mx-auto min-h-screen flex flex-col p-4">
+        
+        <header class="flex justify-between items-center mb-6">
             <div>
-                <h1 class="text-xl font-bold text-blue-800 tracking-tight">French Dictation</h1>
-                <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Toronto Edition</p>
+                <h1 id="menu-title" class="text-2xl font-black text-blue-900 tracking-tight">Dictée Pro</h1>
+                <p class="text-[10px] text-blue-500 font-bold uppercase tracking-widest">TEF / TCF Preparation</p>
             </div>
-            <button id="settings-btn" class="bg-slate-100 p-3 rounded-full flex items-center justify-center" style="min-width: 48px; min-height: 48px;">
-                <span class="text-xl">⚙️</span>
-            </button>
+            <button id="settings-trigger" class="bg-white shadow-sm p-3 rounded-2xl border border-slate-200">⚙️</button>
         </header>
 
-        <div id="settings-area" class="hidden absolute top-16 left-0 right-0 mx-4 z-40 bg-white p-6 rounded-2xl border-2 border-blue-100 shadow-2xl space-y-4">
-            <h2 class="font-bold text-blue-800 border-b pb-2">Settings</h2>
-            <div>
-                <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Gemini API Key</label>
-                <input type="password" id="api-key" placeholder="Saved on device" class="w-full p-3 rounded-xl border border-slate-300 text-sm outline-none bg-slate-50">
-            </div>
-            <div class="grid grid-cols-2 gap-3">
-                <div>
-                    <label class="block text-[10px] font-bold text-slate-500 mb-1 uppercase text-center">Length</label>
-                    <select id="length" class="w-full p-2 bg-white border rounded-lg text-xs">
-                        <option value="short">Short</option>
-                        <option value="medium" selected>Medium</option>
-                        <option value="long">Long</option>
-                    </select>
+        <div id="view-menu" class="space-y-4">
+            <div class="bg-blue-600 rounded-3xl p-6 text-white shadow-xl relative overflow-hidden mb-8">
+                <div class="relative z-10">
+                    <p class="text-xs font-bold uppercase opacity-80 mb-1">Vault Status</p>
+                    <h2 class="text-3xl font-black mb-4"><span id="vault-count">0</span> Sentences</h2>
+                    <button id="refill-btn" class="bg-white text-blue-600 px-6 py-2 rounded-full font-bold text-sm shadow-lg active:scale-95 transition-transform">
+                        Refill Vault (Large Batch)
+                    </button>
                 </div>
-                <div>
-                    <label class="block text-[10px] font-bold text-slate-500 mb-1 uppercase text-center">Speed</label>
-                    <select id="speed" class="w-full p-2 bg-white border rounded-lg text-xs">
-                        <option value="0.65">Slow</option>
-                        <option value="0.85" selected>Normal</option>
-                    </select>
+                <div class="absolute -right-4 -bottom-4 text-9xl opacity-10">🇫🇷</div>
+            </div>
+
+            <div class="grid grid-cols-1 gap-4">
+                <button id="start-dictation" class="flex items-center gap-4 bg-white p-5 rounded-3xl border border-slate-200 shadow-sm active:bg-slate-50">
+                    <div class="bg-emerald-100 p-3 rounded-2xl text-2xl">🎧</div>
+                    <div class="text-left">
+                        <p class="font-bold text-slate-800">Start Dictation</p>
+                        <p class="text-xs text-slate-500">Practice listening & spelling</p>
+                    </div>
+                </button>
+
+                <button id="go-review" class="flex items-center gap-4 bg-white p-5 rounded-3xl border border-slate-200 shadow-sm active:bg-slate-50">
+                    <div class="bg-orange-100 p-3 rounded-2xl text-2xl">🔄</div>
+                    <div class="text-left">
+                        <p class="font-bold text-slate-800">Review Room</p>
+                        <p class="text-xs text-slate-500"><span id="review-count">0</span> items need practice</p>
+                    </div>
+                </button>
+
+                <div class="opacity-40 grayscale flex items-center gap-4 bg-white p-5 rounded-3xl border border-slate-200">
+                    <div class="bg-slate-100 p-3 rounded-2xl text-2xl">📝</div>
+                    <div class="text-left">
+                        <p class="font-bold text-slate-800 italic">Summarize (Coming Soon)</p>
+                        <p class="text-xs text-slate-500">TEF Section B Prep</p>
+                    </div>
                 </div>
             </div>
-            <button id="close-settings" class="w-full p-3 bg-blue-600 text-white rounded-xl text-sm font-bold uppercase">Save & Close</button>
         </div>
 
-        <div class="flex justify-between items-center bg-blue-50 p-3 rounded-2xl mb-6 border border-blue-100">
-            <div class="text-center flex-1">
-                <p class="text-[10px] text-blue-400 font-bold uppercase leading-none">Avg Score</p>
-                <p id="avg-score" class="text-lg font-black text-blue-700 leading-none mt-1">0%</p>
+        <div id="view-dictation" class="hidden space-y-4 flex-1">
+            <button class="exit-view text-xs font-bold text-blue-600 uppercase mb-2">← Back to Menu</button>
+            
+            <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 text-center">
+                <div id="level-tag" class="inline-block px-3 py-1 rounded-full bg-blue-100 text-blue-700 text-[10px] font-black uppercase mb-4">B1 Level</div>
+                
+                <div class="flex flex-col gap-3 mb-6">
+                    <button id="play-btn" class="w-full bg-blue-600 text-white font-bold py-5 rounded-2xl shadow-lg text-xl">Listen 🔊</button>
+                    <button id="turtle-btn" class="w-full bg-amber-400 text-white font-bold py-3 rounded-2xl text-sm">Turtle Speed 🐢</button>
+                </div>
+
+                <textarea id="user-input" rows="4" placeholder="Tapez ici..." class="w-full p-4 border-2 border-slate-200 rounded-2xl focus:border-blue-500 outline-none mb-2 resize-none"></textarea>
+                
+                <div class="flex justify-center gap-1 mb-4 overflow-x-auto pb-2">
+                    <button class="accent-btn">é</button>
+                    <button class="accent-btn">à</button>
+                    <button class="accent-btn">è</button>
+                    <button class="accent-btn">ê</button>
+                    <button class="accent-btn">ç</button>
+                    <button class="accent-btn">ù</button>
+                </div>
+
+                <button id="check-btn" class="w-full bg-slate-800 text-white font-bold py-4 rounded-2xl uppercase tracking-widest">Verify</button>
             </div>
-            <div class="h-8 w-[1px] bg-blue-200 mx-2"></div>
-            <div class="text-center flex-1">
-                <p class="text-[10px] text-blue-400 font-bold uppercase leading-none">Count</p>
-                <p id="count" class="text-lg font-black text-blue-700 leading-none mt-1">0</p>
+
+            <div id="result-area" class="hidden bg-white p-6 rounded-3xl border-2 border-slate-100">
+                <p id="score-display" class="text-5xl font-black text-center mb-4">0%</p>
+                <p class="text-[10px] font-black text-slate-400 uppercase text-center mb-2">Correct Answer:</p>
+                <p id="correct-text" class="text-slate-700 italic text-center text-sm leading-relaxed"></p>
+                <button id="next-btn" class="w-full mt-6 bg-blue-50 text-blue-600 font-bold py-3 rounded-xl">Next Sentence →</button>
             </div>
-            <button id="reset-btn" class="ml-2 text-[9px] bg-white px-2 py-1 rounded-lg border border-blue-200 text-blue-500 font-bold uppercase">Reset</button>
         </div>
 
-        <div class="space-y-4">
-            <button id="main-btn" class="w-full bg-blue-600 text-white font-bold py-4 rounded-2xl shadow-lg active:scale-95 text-lg">Get New Sentence</button>
-            <div id="audio-controls" class="hidden flex gap-2">
-                <button id="listen-btn" class="flex-1 bg-emerald-500 text-white font-bold py-4 rounded-2xl shadow-md">Listen 🔊</button>
-                <button id="turtle-btn" class="px-5 bg-amber-400 text-white font-bold rounded-2xl shadow-md">Turtle 🐢</button>
+        <div id="view-settings" class="hidden fixed inset-0 bg-white z-50 p-6 flex flex-col">
+            <h2 class="text-2xl font-black text-blue-900 mb-6">Settings</h2>
+            <div class="space-y-4 flex-1">
+                <div>
+                    <label class="block text-[10px] font-black text-slate-400 uppercase mb-1">Gemini API Key</label>
+                    <input type="password" id="api-key" placeholder="Enter Key..." class="w-full p-4 bg-slate-100 rounded-2xl outline-none">
+                </div>
+                <div class="p-4 bg-blue-50 rounded-2xl border border-blue-100">
+                    <p class="text-xs text-blue-700 font-medium">Batch logic: The app requests 50 sentences (A2-B2) focused on daily life, news, and formal communication suitable for TEF/TCF exams.</p>
+                </div>
             </div>
-            <div id="input-area" class="hidden">
-                <textarea id="user-input" rows="3" placeholder="Type what you hear..." class="w-full p-4 border-2 border-slate-200 rounded-2xl focus:border-blue-500 outline-none mb-3 resize-none"></textarea>
-                <button id="check-btn" class="w-full bg-orange-500 text-white font-bold py-4 rounded-2xl shadow-lg active:scale-95 text-lg uppercase">Check Spelling</button>
-            </div>
+            <button id="save-settings" class="w-full bg-blue-600 text-white font-bold py-4 rounded-2xl">Save & Close</button>
         </div>
 
-        <div id="result-box" class="hidden mt-6 p-5 rounded-2xl border bg-slate-50 border-slate-200">
-            <div id="score-text" class="text-4xl font-black text-center mb-2">0%</div>
-            <div class="h-[1px] bg-slate-200 w-full mb-4"></div>
-            <p id="correct-answer" class="text-sm italic text-slate-700 leading-relaxed text-center"></p>
-        </div>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            let currentText = "";
-            let sessionScores = [];
+            // -- State Management --
+            let vault = JSON.parse(localStorage.getItem('french_vault') || '[]');
+            let reviewRoom = JSON.parse(localStorage.getItem('review_vault') || '[]');
+            let currentSentence = null;
+            let isReviewMode = false;
 
-            // UI Elements
-            const settingsBtn = document.getElementById('settings-btn');
-            const settingsArea = document.getElementById('settings-area');
-            const closeSettings = document.getElementById('close-settings');
-            const apiKeyInput = document.getElementById('api-key');
-            const mainBtn = document.getElementById('main-btn');
-            const listenBtn = document.getElementById('listen-btn');
-            const turtleBtn = document.getElementById('turtle-btn');
-            const checkBtn = document.getElementById('check-btn');
-            const resetBtn = document.getElementById('reset-btn');
-
-            // Initialize API Key
-            const savedKey = localStorage.getItem('gemini_api_key');
-            if (savedKey) apiKeyInput.value = savedKey;
-            else settingsArea.classList.remove('hidden');
-
-            // Event Listeners
-            settingsBtn.onclick = () => settingsArea.classList.toggle('hidden');
-            closeSettings.onclick = () => {
-                localStorage.setItem('gemini_api_key', apiKeyInput.value.trim());
-                settingsArea.classList.add('hidden');
-            };
-            
-            resetBtn.onclick = () => {
-                if(confirm("Reset stats?")) {
-                    sessionScores = [];
-                    updateStats();
-                    document.getElementById('result-box').classList.add('hidden');
-                }
+            // -- UI Selectors --
+            const views = {
+                menu: document.getElementById('view-menu'),
+                dictation: document.getElementById('view-dictation'),
+                settings: document.getElementById('view-settings')
             };
 
-            mainBtn.onclick = async () => {
-                const key = apiKeyInput.value;
-                if(!key) return alert("Add API Key in settings!");
+            const updateCounts = () => {
+                document.getElementById('vault-count').innerText = vault.length;
+                document.getElementById('review-count').innerText = reviewRoom.length;
+                localStorage.setItem('french_vault', JSON.stringify(vault));
+                localStorage.setItem('review_vault', JSON.stringify(reviewRoom));
+            };
+
+            const switchView = (target) => {
+                Object.values(views).forEach(v => v.classList.add('hidden'));
+                views[target].classList.remove('hidden');
+            };
+
+            // -- Accent Bar Logic --
+            document.querySelectorAll('.accent-btn').forEach(btn => {
+                btn.onclick = () => {
+                    const input = document.getElementById('user-input');
+                    input.value += btn.innerText;
+                    input.focus();
+                };
+            });
+
+            // -- Batch Refill (The Pivot) --
+            document.getElementById('refill-btn').onclick = async () => {
+                const key = document.getElementById('api-key').value;
+                if(!key) return alert("Please set API Key in settings!");
                 
-                mainBtn.disabled = true;
-                mainBtn.innerText = "Generating...";
-                
+                const btn = document.getElementById('refill-btn');
+                btn.disabled = true;
+                btn.innerText = "Downloading 50 sentences...";
+
+                const prompt = `Generate 50 French sentences for dictation as a JSON array. 
+                Focus: Daily life, TEF/TCF exam themes (news, transport, environment, health, work-life balance). 
+                Exclude technical finance/FCRM terms. 
+                Structure: [{"text": "...", "level": "A2/B1/B2"}]. 
+                Mix the levels evenly. No markdown, just the array.`;
+
                 try {
                     const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${key}`, {
                         method: 'POST',
                         headers: {'Content-Type': 'application/json'},
-                        body: JSON.stringify({ contents: [{ parts: [{ text: "Generate a B1 French sentence for dictation. No translation. Max 15 words." }]}] })
+                        body: JSON.stringify({ contents: [{ parts: [{ text: prompt }]}] })
                     });
                     const data = await response.json();
-                    currentText = data.candidates[0].content.parts[0].text.trim();
+                    let rawText = data.candidates[0].content.parts[0].text;
                     
-                    document.getElementById('audio-controls').classList.remove('hidden');
-                    document.getElementById('input-area').classList.remove('hidden');
-                    document.getElementById('result-box').classList.add('hidden');
-                    document.getElementById('user-input').value = "";
-                    playAudio();
-                } catch (e) { alert("API Error. Check your key."); }
+                    // Clean potential markdown from LLM
+                    rawText = rawText.replace(/```json|```/g, "").trim();
+                    const newSentences = JSON.parse(rawText);
+                    
+                    vault = [...vault, ...newSentences];
+                    updateCounts();
+                    alert("Vault Refilled!");
+                } catch (e) {
+                    console.error(e);
+                    alert("Error during batch load. Check API key and quota.");
+                }
+                btn.disabled = false;
+                btn.innerText = "Refill Vault (Large Batch)";
+            };
+
+            // -- Dictation Engine --
+            const setupSentence = (sourceArray) => {
+                if(sourceArray.length === 0) {
+                    alert("Vault is empty. Please refill!");
+                    return switchView('menu');
+                }
+                const index = Math.floor(Math.random() * sourceArray.length);
+                currentSentence = sourceArray[index];
                 
-                mainBtn.disabled = false;
-                mainBtn.innerText = "Get New Sentence";
+                // Update UI
+                document.getElementById('level-tag').innerText = currentSentence.level + " Level";
+                document.getElementById('user-input').value = "";
+                document.getElementById('result-area').classList.add('hidden');
+                document.getElementById('check-btn').classList.remove('hidden');
+                playAudio();
             };
 
-            listenBtn.onclick = () => playAudio();
-            turtleBtn.onclick = () => playAudio(0.55);
-            checkBtn.onclick = () => {
-                const userText = document.getElementById('user-input').value.trim();
-                const score = calculateScore(currentText, userText);
-                sessionScores.push(score);
-                updateStats();
-                showResult(score);
-            };
-
-            function playAudio(speed = null) {
+            const playAudio = (speed = 0.85) => {
                 window.speechSynthesis.cancel();
-                const u = new SpeechSynthesisUtterance(currentText);
+                const u = new SpeechSynthesisUtterance(currentSentence.text);
                 u.lang = 'fr-FR';
-                u.rate = speed || parseFloat(document.getElementById('speed').value);
+                u.rate = speed;
                 window.speechSynthesis.speak(u);
-            }
+            };
 
-            function updateStats() {
-                const count = sessionScores.length;
-                const avg = count ? Math.round(sessionScores.reduce((a,b)=>a+b,0)/count) : 0;
-                document.getElementById('count').innerText = count;
-                document.getElementById('avg-score').innerText = avg + "%";
-            }
-
-            function showResult(score) {
-                const box = document.getElementById('result-box');
-                const txt = document.getElementById('score-text');
-                box.classList.remove('hidden');
-                txt.innerText = score + "%";
-                document.getElementById('correct-answer').innerText = currentText;
-                txt.className = `text-4xl font-black text-center mb-2 ${score >= 80 ? 'text-emerald-500' : 'text-orange-500'}`;
-                box.scrollIntoView({behavior:'smooth'});
-            }
-
-            function calculateScore(s1, s2) {
+            const calculateScore = (s1, s2) => {
                 const a = s1.toLowerCase().replace(/[.,!?;:]/g, "").trim();
                 const b = s2.toLowerCase().replace(/[.,!?;:]/g, "").trim();
-                let matches = 0;
                 const wordsA = a.split(" ");
                 const wordsB = b.split(" ");
+                let matches = 0;
                 wordsA.forEach((w, i) => { if(w === wordsB[i]) matches++; });
                 return Math.round((matches / wordsA.length) * 100);
-            }
+            };
+
+            // -- Event Bindings --
+            document.getElementById('start-dictation').onclick = () => {
+                isReviewMode = false;
+                switchView('dictation');
+                setupSentence(vault);
+            };
+
+            document.getElementById('go-review').onclick = () => {
+                if(reviewRoom.length === 0) return alert("No sentences to review yet!");
+                isReviewMode = true;
+                switchView('dictation');
+                setupSentence(reviewRoom);
+            };
+
+            document.getElementById('check-btn').onclick = () => {
+                const score = calculateScore(currentSentence.text, document.getElementById('user-input').value);
+                
+                // Result UI
+                const area = document.getElementById('result-area');
+                const disp = document.getElementById('score-display');
+                area.classList.remove('hidden');
+                document.getElementById('check-btn').classList.add('hidden');
+                document.getElementById('correct-text').innerText = currentSentence.text;
+                disp.innerText = score + "%";
+                disp.className = `text-5xl font-black text-center mb-4 ${score >= 80 ? 'text-emerald-500' : 'text-orange-600'}`;
+
+                // Logic: Remove from current queue
+                if(isReviewMode) {
+                    if(score >= 90) reviewRoom = reviewRoom.filter(s => s.text !== currentSentence.text);
+                } else {
+                    vault = vault.filter(s => s.text !== currentSentence.text);
+                    if(score < 75) reviewRoom.push(currentSentence);
+                }
+                updateCounts();
+            };
+
+            document.getElementById('next-btn').onclick = () => setupSentence(isReviewMode ? reviewRoom : vault);
+            document.getElementById('play-btn').onclick = () => playAudio(0.85);
+            document.getElementById('turtle-btn').onclick = () => playAudio(0.55);
+            document.getElementById('settings-trigger').onclick = () => switchView('settings');
+            document.getElementById('save-settings').onclick = () => {
+                localStorage.setItem('gemini_api_key', document.getElementById('api-key').value);
+                switchView('menu');
+            };
+            document.querySelectorAll('.exit-view').forEach(btn => btn.onclick = () => switchView('menu'));
+
+            // Init
+            const savedKey = localStorage.getItem('gemini_api_key');
+            if(savedKey) document.getElementById('api-key').value = savedKey;
+            updateCounts();
         });
     </script>
 </body>
-</html>
+                            </html>
+                            
