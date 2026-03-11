@@ -3,16 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>French Lab v3.8 - The Master Suite</title>
+    <title>French Lab v3.9 - News Fix</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         .accent-btn { @apply bg-slate-100 p-2 rounded-xl text-sm font-bold w-12 h-12 flex items-center justify-center active:bg-blue-600 active:text-white transition-all shadow-sm; }
         ::-webkit-scrollbar { display: none; }
         @keyframes slideUp { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-        .animate-slide-up { animation: slideUp 0.3s ease-out; }
+        .animate-slide-up { animation: slideUp 0.2s ease-out; }
         .toast { position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%); z-index: 100; @apply bg-slate-800 text-white px-6 py-3 rounded-2xl shadow-2xl text-sm font-bold flex items-center gap-3; }
         .vocab-chip { @apply inline-block px-3 py-1 rounded-full text-[10px] font-bold mr-2 mb-2 border; }
-        .sentence-block { @apply p-3 rounded-2xl transition-all duration-300 hover:bg-emerald-50/50 cursor-pointer border border-transparent hover:border-emerald-100; }
+        .sentence-block { @apply p-3 rounded-2xl transition-all duration-300 hover:bg-emerald-50 cursor-pointer border border-transparent hover:border-emerald-100; }
         .translation-text { @apply text-slate-400 text-sm font-medium mt-1 leading-snug hidden animate-slide-up; }
     </style>
 </head>
@@ -25,34 +25,34 @@
         <header class="flex justify-between items-center mb-6 py-2">
             <div>
                 <h1 class="text-2xl font-black text-blue-900 tracking-tight">French Lab</h1>
-                <p class="text-[10px] text-blue-500 font-black uppercase tracking-[0.15em]">Immersion Suite • v3.8</p>
+                <p class="text-[10px] text-blue-500 font-black uppercase tracking-[0.15em]">Immersion Suite • v3.9</p>
             </div>
-            <button id="settings-trigger" class="bg-white shadow-md p-3 rounded-2xl border border-slate-100 active:rotate-45 transition-transform">⚙️</button>
+            <button id="settings-trigger" class="bg-white shadow-md p-3 rounded-2xl border border-slate-100">⚙️</button>
         </header>
 
         <div id="view-menu" class="space-y-4">
-            <div class="bg-emerald-600 rounded-[2.5rem] p-6 text-white shadow-xl relative overflow-hidden">
+            <div class="bg-emerald-600 rounded-[2.5rem] p-6 text-white shadow-xl">
                 <div class="flex justify-between items-start mb-4">
                     <div><p class="text-[10px] font-black uppercase opacity-70 tracking-widest">Le Journal</p><h2 class="text-3xl font-black"><span id="news-count">0</span> Articles</h2></div>
                     <button id="refill-news-btn" class="bg-white/20 px-4 py-2 rounded-xl text-[10px] font-black uppercase">Fetch News</button>
                 </div>
-                <button id="start-news" class="w-full bg-white text-emerald-600 py-4 rounded-2xl font-black text-sm shadow-lg active:scale-95 transition-all">Read Immersion News</button>
+                <button id="start-news" class="w-full bg-white text-emerald-600 py-4 rounded-2xl font-black text-sm shadow-lg">Read Immersion News</button>
             </div>
 
-            <div class="bg-blue-600 rounded-[2.5rem] p-6 text-white shadow-xl relative overflow-hidden">
+            <div class="bg-blue-600 rounded-[2.5rem] p-6 text-white shadow-xl">
                 <div class="flex justify-between items-start mb-4">
                     <div><p class="text-[10px] font-black uppercase opacity-70 tracking-widest">Dictation</p><h2 class="text-3xl font-black"><span id="vault-count">0</span> Items</h2></div>
                     <button id="refill-btn" class="bg-white/20 px-4 py-2 rounded-xl text-[10px] font-black uppercase">Refill</button>
                 </div>
-                <button id="start-dictation" class="w-full bg-white text-blue-600 py-4 rounded-2xl font-black text-sm shadow-lg active:scale-95 transition-all">Start Dictation</button>
+                <button id="start-dictation" class="w-full bg-white text-blue-600 py-4 rounded-2xl font-black text-sm shadow-lg">Start Dictation</button>
             </div>
 
-            <div class="bg-indigo-900 rounded-[2.5rem] p-6 text-white shadow-xl relative overflow-hidden">
+            <div class="bg-indigo-900 rounded-[2.5rem] p-6 text-white shadow-xl">
                 <div class="flex justify-between items-start mb-4">
                     <div><p class="text-[10px] font-black uppercase opacity-70 tracking-widest text-indigo-300">Listening Lab</p><h2 class="text-3xl font-black"><span id="listening-count">0</span> Stories</h2></div>
                     <button id="refill-listening-btn" class="bg-indigo-700 px-4 py-2 rounded-xl text-[10px] font-black uppercase">Refill</button>
                 </div>
-                <button id="start-listening" class="w-full bg-indigo-500 text-white py-4 rounded-2xl font-black text-sm shadow-lg active:scale-95 transition-all">Start Listening</button>
+                <button id="start-listening" class="w-full bg-indigo-500 text-white py-4 rounded-2xl font-black text-sm shadow-lg">Start Listening</button>
             </div>
         </div>
 
@@ -125,9 +125,9 @@
                 <input type="password" id="api-key" placeholder="Gemini API Key..." class="w-full p-5 bg-slate-50 rounded-2xl border">
                 <button id="btn-test-api" class="w-full py-3 bg-blue-50 text-blue-600 rounded-xl font-black text-[10px] uppercase border">Test Connection</button>
                 <div class="pt-8 space-y-3">
-                    <button onclick="localStorage.setItem('news_vault', '[]'); updateUI();" class="w-full p-5 bg-emerald-50 text-emerald-700 rounded-2xl font-bold flex justify-between">Wipe News</button>
-                    <button onclick="localStorage.setItem('listening_vault', '[]'); updateUI();" class="w-full p-5 bg-indigo-50 text-indigo-700 rounded-2xl font-bold flex justify-between">Wipe Listening</button>
-                    <button onclick="localStorage.setItem('french_vault', '[]'); updateUI();" class="w-full p-5 bg-orange-50 text-orange-700 rounded-2xl font-bold flex justify-between">Wipe Dictation</button>
+                    <button id="btn-wipe-news" class="w-full p-5 bg-emerald-50 text-emerald-700 rounded-2xl font-bold">Wipe News</button>
+                    <button id="btn-wipe-listening" class="w-full p-5 bg-indigo-50 text-indigo-700 rounded-2xl font-bold">Wipe Listening</button>
+                    <button id="btn-wipe-vault" class="w-full p-5 bg-orange-50 text-orange-700 rounded-2xl font-bold">Wipe Dictation</button>
                 </div>
             </div>
             <button id="save-settings" class="w-full bg-blue-600 text-white font-black py-5 rounded-[2rem] mt-4 shadow-xl">Save & Close</button>
@@ -160,8 +160,31 @@
 
             // REFILLS
             document.getElementById('refill-btn').onclick = async () => { try { vault = [...vault, ...await apiCall('50 French sentences A1-B1. JSON: [{"text": "...", "english": "...", "level": "A1/A2/B1"}]')]; updateUI(); showToast("Dictation Refilled"); } catch(e){alert(e.message)} };
-            document.getElementById('refill-listening-btn').onclick = async () => { try { lVault = [...lVault, ...await apiCall('10 French stories A1-B1. 100+ words. 5 inference-based questions. JSON: [{"topic": "...", "transcript": "...", "level": "A1/A2/B1", "questions": [{"q": "...", "options": ["A", "B", "C"], "correct": 0}]}]')]; updateUI(); showToast("Listening Refilled"); } catch(e){alert(e.message)} };
-            document.getElementById('refill-news-btn').onclick = async () => { try { nVault = [...nVault, ...await apiCall('5 French news B1. JSON ONLY: [{"title": "...", "segments": [{"fr": "French", "en": "English"}], "vocab": {"verbs": [], "nouns": [], "connectors": []}}]')]; updateUI(); showToast("Immersion News Loaded"); } catch(e){alert(e.message)} };
+            document.getElementById('refill-listening-btn').onclick = async () => { try { lVault = [...lVault, ...await apiCall('10 French stories A1-B1. JSON: [{"topic": "...", "transcript": "...", "level": "A1/A2/B1", "questions": [{"q": "...", "options": ["A", "B", "C"], "correct": 0}]}]')]; updateUI(); showToast("Listening Refilled"); } catch(e){alert(e.message)} };
+            document.getElementById('refill-news-btn').onclick = async () => { try { nVault = [...nVault, ...await apiCall('5 French news B1. Return exactly this JSON: [{"title": "...", "segments": [{"fr": "...", "en": "..."}], "vocab": {"verbs": [], "nouns": [], "connectors": []}}]')]; updateUI(); showToast("News Loaded"); } catch(e){alert(e.message)} };
+
+            // NEWS LOGIC
+            const setupNews = () => {
+                if(nVault.length === 0) return alert("Fetch News First!");
+                currentItem = nVault[0];
+                document.getElementById('news-title').innerText = currentItem.title;
+                const cont = document.getElementById('news-sentences-container'); cont.innerHTML = "";
+                currentItem.segments.forEach(seg => {
+                    const block = document.createElement('div'); block.className = "sentence-block";
+                    block.innerHTML = `<div class="flex justify-between gap-3"><p class="text-slate-800 font-bold italic flex-1">${seg.fr}</p><span class="text-xs opacity-20">👁️</span></div><p class="translation-text">${seg.en}</p>`;
+                    block.onclick = () => { block.querySelector('.translation-text').classList.toggle('hidden'); block.classList.toggle('bg-emerald-50'); };
+                    cont.appendChild(block);
+                });
+                const vCont = document.getElementById('news-vocab-chips'); vCont.innerHTML = "";
+                const cols = { verbs: 'bg-blue-50 text-blue-600', nouns: 'bg-emerald-50 text-emerald-600', connectors: 'bg-purple-50 text-purple-600' };
+                for(let cat in currentItem.vocab) currentItem.vocab[cat].forEach(w => {
+                    const s = document.createElement('span'); s.className = `vocab-chip ${cols[cat]||'bg-slate-50'}`; s.innerText = w; vCont.appendChild(s);
+                });
+                switchView('news');
+            };
+
+            document.getElementById('start-news').onclick = setupNews;
+            document.getElementById('next-news-btn').onclick = () => { nVault.shift(); updateUI(); setupNews(); };
 
             // DICTATION LOGIC
             document.getElementById('start-dictation').onclick = () => {
@@ -185,7 +208,7 @@
             ['é','à','è','ç','î','û'].forEach(a => {
                 const b = document.createElement('button'); b.className="accent-btn"; b.innerText=a;
                 b.onclick = () => { const area = document.getElementById('user-input'); area.value += a; area.focus(); };
-                document.getElementById('accents-container').appendChild(b);
+                if(document.getElementById('accents-container')) document.getElementById('accents-container').appendChild(b);
             });
             document.getElementById('next-btn').onclick = () => document.getElementById('start-dictation').click();
 
@@ -221,33 +244,22 @@
                 lVault.shift(); updateUI(); switchView('listenResults');
             };
 
-            // NEWS IMMERSION LOGIC
-            document.getElementById('start-news').onclick = () => {
-                if(nVault.length === 0) return alert("Fetch News First!");
-                currentItem = nVault[0];
-                document.getElementById('news-title').innerText = currentItem.title;
-                const cont = document.getElementById('news-sentences-container'); cont.innerHTML = "";
-                currentItem.segments.forEach(seg => {
-                    const block = document.createElement('div'); block.className = "sentence-block";
-                    block.innerHTML = `<div class="flex justify-between gap-3"><p class="text-slate-800 font-bold italic flex-1">${seg.fr}</p><span class="text-xs opacity-20">👁️</span></div><p class="translation-text">${seg.en}</p>`;
-                    block.onclick = () => { block.querySelector('.translation-text').classList.toggle('hidden'); block.classList.toggle('bg-emerald-50'); };
-                    cont.appendChild(block);
-                });
-                const vCont = document.getElementById('news-vocab-chips'); vCont.innerHTML = "";
-                const cols = { verbs: 'bg-blue-50 text-blue-600', nouns: 'bg-emerald-50 text-emerald-600', connectors: 'bg-purple-50 text-purple-600' };
-                for(let cat in currentItem.vocab) currentItem.vocab[cat].forEach(w => {
-                    const s = document.createElement('span'); s.className = `vocab-chip ${cols[cat]||'bg-slate-50'}`; s.innerText = w; vCont.appendChild(s);
-                });
-                switchView('news');
-            };
-
-            // GLOBALS
+            // GLOBALS & AUDIO
             document.getElementById('news-play-btn').onclick = () => playAudio(currentItem.segments.map(s=>s.fr).join(". "), 0.85);
+            document.getElementById('news-turtle-btn').onclick = () => playAudio(currentItem.segments.map(s=>s.fr).join(". "), 0.6);
             document.getElementById('listen-play-btn').onclick = () => playAudio(currentItem.transcript, 0.85);
+            document.getElementById('listen-turtle-btn').onclick = () => playAudio(currentItem.transcript, 0.6);
             document.getElementById('play-btn').onclick = () => playAudio(currentItem.text, 0.85);
+            document.getElementById('turtle-btn').onclick = () => playAudio(currentItem.text, 0.6);
             document.getElementById('settings-trigger').onclick = () => switchView('settings');
             document.querySelectorAll('.exit-view').forEach(b => b.onclick = () => switchView('menu'));
             document.getElementById('save-settings').onclick = () => { localStorage.setItem('gemini_api_key', document.getElementById('api-key').value); switchView('menu'); };
+            
+            document.getElementById('btn-wipe-news').onclick = () => { nVault = []; updateUI(); showToast("Wiped"); };
+            document.getElementById('btn-wipe-listening').onclick = () => { lVault = []; updateUI(); showToast("Wiped"); };
+            document.getElementById('btn-wipe-vault').onclick = () => { vault = []; updateUI(); showToast("Wiped"); };
+
+            if(localStorage.getItem('gemini_api_key')) document.getElementById('api-key').value = localStorage.getItem('gemini_api_key');
             updateUI();
         });
     </script>
