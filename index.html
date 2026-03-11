@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>French Lab v4.0 - Smart Score</title>
+    <title>French Lab v4.1 - Pro Suite</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         .accent-btn { @apply bg-slate-100 p-2 rounded-xl text-sm font-bold w-12 h-12 flex items-center justify-center active:bg-blue-600 active:text-white transition-all shadow-sm; }
@@ -22,12 +22,13 @@
 <body class="bg-slate-50 min-h-screen font-sans text-slate-900 select-none">
 
     <div id="toast-container"></div>
+    
     <div id="modal-container" class="hidden modal-overlay">
-        <div class="bg-white w-full max-w-xs rounded-[2.5rem] p-8 shadow-2xl animate-slide-up text-center">
+        <div class="bg-white w-full max-w-xs rounded-[2.5rem] p-8 shadow-2xl animate-slide-up text-center border border-slate-100">
             <div id="modal-icon" class="text-4xl mb-4">⚠️</div>
-            <h3 id="modal-title" class="text-xl font-black mb-2">Notice</h3>
+            <h3 id="modal-title" class="text-xl font-black mb-2 tracking-tight">Notice</h3>
             <p id="modal-body" class="text-slate-500 text-sm mb-6 leading-relaxed"></p>
-            <button id="modal-close" class="w-full bg-slate-900 text-white font-black py-4 rounded-2xl">Understood</button>
+            <button id="modal-close" class="w-full bg-slate-900 text-white font-black py-4 rounded-2xl active:scale-95 transition-all">D'accord</button>
         </div>
     </div>
 
@@ -35,9 +36,9 @@
         <header class="flex justify-between items-center mb-6 py-2">
             <div>
                 <h1 class="text-2xl font-black text-blue-900 tracking-tight">French Lab</h1>
-                <p class="text-[10px] text-blue-500 font-black uppercase tracking-[0.15em]">Pro Suite • v4.0</p>
+                <p class="text-[10px] text-blue-500 font-black uppercase tracking-[0.15em]">Pro Suite • v4.1</p>
             </div>
-            <button id="settings-trigger" class="bg-white shadow-md p-3 rounded-2xl border border-slate-100">⚙️</button>
+            <button id="settings-trigger" class="bg-white shadow-md p-3 rounded-2xl border border-slate-100 active:rotate-45 transition-all">⚙️</button>
         </header>
 
         <div id="view-menu" class="space-y-4">
@@ -76,7 +77,7 @@
                 </div>
                 <textarea id="user-input" rows="3" placeholder="Tapez ici..." class="w-full p-6 bg-slate-50 border-2 border-transparent focus:border-blue-500 rounded-[2rem] outline-none mb-6 resize-none font-medium leading-relaxed"></textarea>
                 <div class="flex flex-wrap justify-center gap-2 mb-8" id="accents-container"></div>
-                <button id="check-btn" class="w-full bg-blue-600 text-white font-black py-5 rounded-3xl uppercase tracking-widest shadow-lg">Verify Answer</button>
+                <button id="check-btn" class="w-full bg-blue-600 text-white font-black py-5 rounded-3xl uppercase tracking-widest shadow-lg active:scale-95">Verify Answer</button>
             </div>
             <div id="result-area" class="hidden bg-white p-8 rounded-[3.5rem] border border-slate-200 shadow-2xl animate-slide-up mt-4">
                 <p id="score-display" class="text-6xl font-black text-center mb-6">0%</p>
@@ -95,7 +96,7 @@
                     <button id="listen-turtle-btn" class="bg-slate-800 text-white px-6 rounded-2xl font-bold text-xs">Slow 🐢</button>
                 </div>
                 <div id="mcq-container" class="space-y-6 text-left max-h-[40vh] overflow-y-auto px-1"></div>
-                <button id="submit-listening" class="w-full mt-8 bg-indigo-600 text-white font-black py-5 rounded-3xl uppercase tracking-widest hidden animate-pulse">Check Results</button>
+                <button id="submit-listening" class="w-full mt-8 bg-indigo-600 text-white font-black py-5 rounded-3xl uppercase tracking-widest hidden animate-pulse">Check Quiz</button>
             </div>
         </div>
 
@@ -103,7 +104,7 @@
             <div class="bg-white p-8 rounded-[3.5rem] shadow-2xl border border-slate-100 animate-slide-up">
                 <div class="w-24 h-24 rounded-full border-8 border-indigo-600 flex items-center justify-center mx-auto mb-6"><span id="listen-score-text" class="text-2xl font-black text-indigo-600">0%</span></div>
                 <p id="listen-final-transcript" class="text-left bg-slate-50 p-6 rounded-3xl text-slate-800 italic overflow-y-auto max-h-[35vh]"></p>
-                <button class="exit-view w-full mt-8 bg-blue-600 text-white font-black py-5 rounded-3xl">Done</button>
+                <button class="exit-view w-full mt-8 bg-blue-600 text-white font-black py-5 rounded-3xl">Back to Menu</button>
             </div>
         </div>
 
@@ -122,7 +123,7 @@
                 </div>
                 <div class="flex-1 overflow-y-auto p-4 space-y-2" id="news-sentences-container"></div>
                 <div id="news-vocab-section" class="p-6 bg-slate-50 border-t border-slate-100">
-                    <p class="text-[9px] font-black text-slate-400 uppercase mb-3 tracking-widest">Mots Importants</p>
+                    <p class="text-[9px] font-black text-slate-400 uppercase mb-3 tracking-widest">Vocabulaire Clé</p>
                     <div id="news-vocab-chips" class="flex flex-wrap"></div>
                 </div>
                 <div class="p-4 bg-white"><button id="next-news-btn" class="w-full bg-emerald-600 text-white font-black py-4 rounded-2xl shadow-lg">Next Article →</button></div>
@@ -131,15 +132,16 @@
 
         <div id="view-settings" class="hidden fixed inset-0 bg-white z-50 p-8 flex flex-col">
             <h2 class="text-3xl font-black text-slate-900 mb-8 tracking-tighter">Settings</h2>
-            <div class="space-y-4 flex-1">
+            <div class="space-y-4 flex-1 overflow-y-auto">
                 <input type="password" id="api-key" placeholder="Gemini API Key..." class="w-full p-5 bg-slate-50 rounded-2xl border focus:border-blue-500 outline-none">
+                <button id="btn-test-api" class="w-full py-4 bg-blue-50 text-blue-600 rounded-xl font-black text-xs uppercase border border-blue-100 active:bg-blue-100">Verify Key (Zero-Cost)</button>
                 <div class="pt-8 space-y-3">
-                    <button id="btn-wipe-news" class="w-full p-5 bg-slate-100 text-slate-700 rounded-2xl font-bold flex justify-between items-center">Wipe News <span>🗑️</span></button>
-                    <button id="btn-wipe-listening" class="w-full p-5 bg-slate-100 text-slate-700 rounded-2xl font-bold flex justify-between items-center">Wipe Listening <span>🗑️</span></button>
-                    <button id="btn-wipe-vault" class="w-full p-5 bg-slate-100 text-slate-700 rounded-2xl font-bold flex justify-between items-center">Wipe Dictation <span>🗑️</span></button>
+                    <button id="btn-wipe-news" class="w-full p-5 bg-slate-100 text-slate-700 rounded-2xl font-bold flex justify-between items-center">Wipe News Articles <span>🗑️</span></button>
+                    <button id="btn-wipe-listening" class="w-full p-5 bg-slate-100 text-slate-700 rounded-2xl font-bold flex justify-between items-center">Wipe Listening Lab <span>🗑️</span></button>
+                    <button id="btn-wipe-vault" class="w-full p-5 bg-slate-100 text-slate-700 rounded-2xl font-bold flex justify-between items-center">Wipe Dictation List <span>🗑️</span></button>
                 </div>
             </div>
-            <button id="save-settings" class="w-full bg-blue-600 text-white font-black py-5 rounded-[2rem] mt-auto shadow-xl">Save & Close</button>
+            <button id="save-settings" class="w-full bg-blue-600 text-white font-black py-5 rounded-[2rem] mt-4 shadow-xl active:scale-95 transition-all">Save & Exit</button>
         </div>
     </div>
 
@@ -150,7 +152,7 @@
             let nVault = JSON.parse(localStorage.getItem('news_vault') || '[]');
             let currentItem = null;
 
-            // SMART MODAL LOGIC
+            // SMART MODAL
             const showModal = (title, body, icon = '⚠️') => {
                 document.getElementById('modal-title').innerText = title;
                 document.getElementById('modal-body').innerText = body;
@@ -165,7 +167,7 @@
             const updateUI = () => { document.getElementById('vault-count').innerText = vault.length; document.getElementById('listening-count').innerText = lVault.length; document.getElementById('news-count').innerText = nVault.length; localStorage.setItem('french_vault', JSON.stringify(vault)); localStorage.setItem('listening_vault', JSON.stringify(lVault)); localStorage.setItem('news_vault', JSON.stringify(nVault)); };
             const playAudio = (text, rate) => { window.speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(text); u.lang = 'fr-FR'; u.rate = rate; window.speechSynthesis.speak(u); };
 
-            // FUZZY SCORE LOGIC (Levenshtein)
+            // FUZZY SCORE (Levenshtein)
             const getSimilarity = (s1, s2) => {
                 const longer = s1.length < s2.length ? s2 : s1;
                 const shorter = s1.length < s2.length ? s1 : s2;
@@ -192,24 +194,40 @@
 
             const apiCall = async (prompt) => {
                 const key = document.getElementById('api-key').value;
-                if(!key) { showModal("Key Missing", "Please add your Gemini API key in Settings first.", "🔑"); throw new Error("No Key"); }
-                const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${key}`, {
+                if(!key) { showModal("Key Missing", "Add your API key in Settings.", "🔑"); throw new Error("No Key"); }
+                const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${key}`, {
                     method: 'POST', headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({ contents: [{ parts: [{ text: prompt }]}] })
                 });
                 const d = await resp.json();
+                if(!d.candidates) throw new Error(d.error.message);
                 const raw = d.candidates[0].content.parts[0].text;
                 return JSON.parse(raw.substring(raw.indexOf("["), raw.lastIndexOf("]") + 1));
             };
 
+            // ZERO-COST TEST CONNECTION
+            document.getElementById('btn-test-api').onclick = async () => {
+                const key = document.getElementById('api-key').value;
+                if(!key) return showModal("Key Missing", "Please enter your Gemini API key.", "🔑");
+                try {
+                    const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${key}`);
+                    if(resp.ok) {
+                        showToast("Connection Successful!");
+                    } else {
+                        const err = await resp.json();
+                        showModal("Invalid Key", err.error.message, "❌");
+                    }
+                } catch(e) { showModal("Network Error", "Unable to reach Gemini servers.", "🌐"); }
+            };
+
             // REFILLS
-            document.getElementById('refill-btn').onclick = async () => { try { vault = [...vault, ...await apiCall('50 French sentences A1-B1. JSON: [{"text": "...", "english": "...", "level": "A1/A2/B1"}]')]; updateUI(); showToast("Dictation Loaded"); } catch(e){} };
-            document.getElementById('refill-listening-btn').onclick = async () => { try { lVault = [...lVault, ...await apiCall('10 French stories A1-B1. JSON: [{"topic": "...", "transcript": "...", "level": "A1/A2/B1", "questions": [{"q": "...", "options": ["A", "B", "C"], "correct": 0}]}]')]; updateUI(); showToast("Listening Loaded"); } catch(e){} };
+            document.getElementById('refill-btn').onclick = async () => { try { vault = [...vault, ...await apiCall('50 short French sentences B1. JSON: [{"text": "...", "english": "...", "level": "B1"}]')]; updateUI(); showToast("Dictation Refilled"); } catch(e){} };
+            document.getElementById('refill-listening-btn').onclick = async () => { try { lVault = [...lVault, ...await apiCall('10 stories B1. JSON: [{"topic": "...", "transcript": "...", "level": "B1", "questions": [{"q": "...", "options": ["A", "B", "C"], "correct": 0}]}]')]; updateUI(); showToast("Listening Refilled"); } catch(e){} };
             document.getElementById('refill-news-btn').onclick = async () => { try { nVault = [...nVault, ...await apiCall('5 news B1. JSON: [{"title": "...", "segments": [{"fr": "...", "en": "..."}], "vocab": {"verbs": [], "nouns": [], "connectors": []}}]')]; updateUI(); showToast("News Loaded"); } catch(e){} };
 
-            // DICTATION
+            // MODULE: DICTATION
             document.getElementById('start-dictation').onclick = () => {
-                if(vault.length === 0) return showModal("Empty Vault", "Click Refill to get fresh sentences.", "📭");
+                if(vault.length === 0) return showModal("Empty Vault", "Click Refill to get sentences.", "📭");
                 currentItem = vault[0];
                 document.getElementById('level-tag').innerText = currentItem.level;
                 document.getElementById('user-input').value = "";
@@ -235,9 +253,9 @@
             });
             document.getElementById('next-btn').onclick = () => document.getElementById('start-dictation').click();
 
-            // LISTENING
+            // MODULE: LISTENING
             document.getElementById('start-listening').onclick = () => {
-                if(lVault.length === 0) return showModal("Empty Vault", "Click Refill for listening exercises.", "🎧");
+                if(lVault.length === 0) return showModal("Empty Vault", "Refill for listening stories.", "🎧");
                 currentItem = lVault[0];
                 document.getElementById('listen-level-tag').innerText = currentItem.level;
                 document.getElementById('listen-topic').innerText = currentItem.topic;
@@ -246,11 +264,11 @@
                     const d = document.createElement('div'); d.className = "space-y-3";
                     d.innerHTML = `<p class="font-black text-sm">${i+1}. ${q.q}</p>`;
                     q.options.forEach((opt, oi) => {
-                        const b = document.createElement('button'); b.className = "w-full text-left p-4 rounded-2xl border-2 border-slate-50 bg-slate-50 text-xs font-bold";
+                        const b = document.createElement('button'); b.className = "w-full text-left p-4 rounded-2xl border-2 border-slate-50 bg-slate-50 text-xs font-bold transition-all";
                         b.innerText = opt;
                         b.onclick = () => {
-                            d.querySelectorAll('button').forEach(btn => btn.classList.remove('border-indigo-600', 'bg-white'));
-                            b.classList.add('border-indigo-600', 'bg-white'); b.dataset.selected = oi;
+                            d.querySelectorAll('button').forEach(btn => btn.classList.remove('border-indigo-600', 'bg-white', 'shadow-md'));
+                            b.classList.add('border-indigo-600', 'bg-white', 'shadow-md'); b.dataset.selected = oi;
                             if(document.querySelectorAll('[data-selected]').length === currentItem.questions.length) document.getElementById('submit-listening').classList.remove('hidden');
                         };
                         d.appendChild(b);
@@ -267,20 +285,20 @@
                 lVault.shift(); updateUI(); switchView('listenResults');
             };
 
-            // NEWS
+            // MODULE: IMMERSION NEWS
             const setupNews = () => {
-                if(nVault.length === 0) return showModal("No News", "Fetch some articles in the main menu.", "🗞️");
+                if(nVault.length === 0) return showModal("Empty Vault", "Fetch news articles in the menu.", "🗞️");
                 currentItem = nVault[0];
                 document.getElementById('news-title').innerText = currentItem.title;
                 const cont = document.getElementById('news-sentences-container'); cont.innerHTML = "";
                 currentItem.segments.forEach(seg => {
                     const block = document.createElement('div'); block.className = "sentence-block";
-                    block.innerHTML = `<div class="flex justify-between gap-3"><p class="text-slate-800 font-bold italic flex-1">${seg.fr}</p><span class="text-xs opacity-20">👁️</span></div><p class="translation-text">${seg.en}</p>`;
+                    block.innerHTML = `<div class="flex justify-between gap-3"><p class="text-slate-800 font-bold italic flex-1 leading-relaxed">${seg.fr}</p><span class="text-xs opacity-20">👁️</span></div><p class="translation-text">${seg.en}</p>`;
                     block.onclick = () => { block.querySelector('.translation-text').classList.toggle('hidden'); block.classList.toggle('bg-emerald-50'); };
                     cont.appendChild(block);
                 });
                 const vCont = document.getElementById('news-vocab-chips'); vCont.innerHTML = "";
-                const cols = { verbs: 'bg-blue-50 text-blue-600', nouns: 'bg-emerald-50 text-emerald-600', connectors: 'bg-purple-50 text-purple-600' };
+                const cols = { verbs: 'bg-blue-50 text-blue-600 border-blue-100', nouns: 'bg-emerald-50 text-emerald-600 border-emerald-100', connectors: 'bg-purple-50 text-purple-600 border-purple-100' };
                 for(let cat in currentItem.vocab) currentItem.vocab[cat].forEach(w => {
                     const s = document.createElement('span'); s.className = `vocab-chip ${cols[cat]||'bg-slate-50'}`; s.innerText = w; vCont.appendChild(s);
                 });
@@ -289,7 +307,7 @@
             document.getElementById('start-news').onclick = setupNews;
             document.getElementById('next-news-btn').onclick = () => { nVault.shift(); updateUI(); setupNews(); };
 
-            // SYSTEM
+            // GLOBAL HELPERS
             document.getElementById('news-play-btn').onclick = () => playAudio(currentItem.segments.map(s=>s.fr).join(". "), 0.85);
             document.getElementById('news-turtle-btn').onclick = () => playAudio(currentItem.segments.map(s=>s.fr).join(". "), 0.6);
             document.getElementById('listen-play-btn').onclick = () => playAudio(currentItem.transcript, 0.85);
