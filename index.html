@@ -3,29 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>French Lab v3.9 - News Fix</title>
+    <title>French Lab v4.0 - Smart Score</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         .accent-btn { @apply bg-slate-100 p-2 rounded-xl text-sm font-bold w-12 h-12 flex items-center justify-center active:bg-blue-600 active:text-white transition-all shadow-sm; }
         ::-webkit-scrollbar { display: none; }
         @keyframes slideUp { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-        .animate-slide-up { animation: slideUp 0.2s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .animate-slide-up { animation: slideUp 0.3s ease-out; }
+        .animate-fade-in { animation: fadeIn 0.2s ease-in; }
         .toast { position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%); z-index: 100; @apply bg-slate-800 text-white px-6 py-3 rounded-2xl shadow-2xl text-sm font-bold flex items-center gap-3; }
         .vocab-chip { @apply inline-block px-3 py-1 rounded-full text-[10px] font-bold mr-2 mb-2 border; }
         .sentence-block { @apply p-3 rounded-2xl transition-all duration-300 hover:bg-emerald-50 cursor-pointer border border-transparent hover:border-emerald-100; }
         .translation-text { @apply text-slate-400 text-sm font-medium mt-1 leading-snug hidden animate-slide-up; }
+        .modal-overlay { @apply fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[100] flex items-center justify-center p-6 animate-fade-in; }
     </style>
 </head>
 <body class="bg-slate-50 min-h-screen font-sans text-slate-900 select-none">
 
     <div id="toast-container"></div>
+    <div id="modal-container" class="hidden modal-overlay">
+        <div class="bg-white w-full max-w-xs rounded-[2.5rem] p-8 shadow-2xl animate-slide-up text-center">
+            <div id="modal-icon" class="text-4xl mb-4">⚠️</div>
+            <h3 id="modal-title" class="text-xl font-black mb-2">Notice</h3>
+            <p id="modal-body" class="text-slate-500 text-sm mb-6 leading-relaxed"></p>
+            <button id="modal-close" class="w-full bg-slate-900 text-white font-black py-4 rounded-2xl">Understood</button>
+        </div>
+    </div>
 
     <div id="app" class="max-w-md mx-auto min-h-screen flex flex-col p-4 pb-12">
-        
         <header class="flex justify-between items-center mb-6 py-2">
             <div>
                 <h1 class="text-2xl font-black text-blue-900 tracking-tight">French Lab</h1>
-                <p class="text-[10px] text-blue-500 font-black uppercase tracking-[0.15em]">Immersion Suite • v3.9</p>
+                <p class="text-[10px] text-blue-500 font-black uppercase tracking-[0.15em]">Pro Suite • v4.0</p>
             </div>
             <button id="settings-trigger" class="bg-white shadow-md p-3 rounded-2xl border border-slate-100">⚙️</button>
         </header>
@@ -34,7 +44,7 @@
             <div class="bg-emerald-600 rounded-[2.5rem] p-6 text-white shadow-xl">
                 <div class="flex justify-between items-start mb-4">
                     <div><p class="text-[10px] font-black uppercase opacity-70 tracking-widest">Le Journal</p><h2 class="text-3xl font-black"><span id="news-count">0</span> Articles</h2></div>
-                    <button id="refill-news-btn" class="bg-white/20 px-4 py-2 rounded-xl text-[10px] font-black uppercase">Fetch News</button>
+                    <button id="refill-news-btn" class="bg-white/20 px-4 py-2 rounded-xl text-[10px] font-black uppercase">Fetch</button>
                 </div>
                 <button id="start-news" class="w-full bg-white text-emerald-600 py-4 rounded-2xl font-black text-sm shadow-lg">Read Immersion News</button>
             </div>
@@ -61,17 +71,17 @@
             <div class="bg-white p-8 rounded-[3.5rem] shadow-sm border border-slate-100 text-center animate-slide-up">
                 <div id="level-tag" class="inline-block px-4 py-1.5 rounded-full bg-blue-50 text-blue-600 text-[10px] font-black uppercase mb-6 tracking-widest">LEVEL</div>
                 <div class="flex flex-col gap-3 mb-8">
-                    <button id="play-btn" class="w-full bg-blue-600 text-white font-black py-6 rounded-3xl shadow-xl text-xl">Listen 🔊</button>
+                    <button id="play-btn" class="w-full bg-blue-600 text-white font-black py-6 rounded-3xl shadow-xl text-xl active:scale-95 transition-all">Listen 🔊</button>
                     <button id="turtle-btn" class="w-full bg-slate-800 text-white font-bold py-4 rounded-2xl text-[10px] uppercase">Slow 🐢</button>
                 </div>
                 <textarea id="user-input" rows="3" placeholder="Tapez ici..." class="w-full p-6 bg-slate-50 border-2 border-transparent focus:border-blue-500 rounded-[2rem] outline-none mb-6 resize-none font-medium leading-relaxed"></textarea>
-                <div class="flex justify-center gap-2 mb-8" id="accents-container"></div>
-                <button id="check-btn" class="w-full bg-blue-600 text-white font-black py-5 rounded-3xl uppercase tracking-widest shadow-lg">Verify</button>
+                <div class="flex flex-wrap justify-center gap-2 mb-8" id="accents-container"></div>
+                <button id="check-btn" class="w-full bg-blue-600 text-white font-black py-5 rounded-3xl uppercase tracking-widest shadow-lg">Verify Answer</button>
             </div>
             <div id="result-area" class="hidden bg-white p-8 rounded-[3.5rem] border border-slate-200 shadow-2xl animate-slide-up mt-4">
                 <p id="score-display" class="text-6xl font-black text-center mb-6">0%</p>
-                <div class="p-5 bg-slate-50 rounded-2xl mb-4"><p class="text-[9px] font-black text-slate-400 uppercase mb-2">Correct Answer</p><p id="correct-text" class="text-slate-900 font-bold"></p></div>
-                <button id="next-btn" class="w-full bg-blue-600 text-white font-black py-5 rounded-3xl">Next →</button>
+                <div class="p-5 bg-slate-50 rounded-2xl mb-4"><p class="text-[9px] font-black text-slate-400 uppercase mb-2">Correct Answer</p><p id="correct-text" class="text-slate-900 font-bold italic"></p></div>
+                <button id="next-btn" class="w-full bg-blue-600 text-white font-black py-5 rounded-3xl">Next Sentence →</button>
             </div>
         </div>
 
@@ -85,15 +95,15 @@
                     <button id="listen-turtle-btn" class="bg-slate-800 text-white px-6 rounded-2xl font-bold text-xs">Slow 🐢</button>
                 </div>
                 <div id="mcq-container" class="space-y-6 text-left max-h-[40vh] overflow-y-auto px-1"></div>
-                <button id="submit-listening" class="w-full mt-8 bg-indigo-600 text-white font-black py-5 rounded-3xl uppercase tracking-widest hidden animate-pulse">Check Quiz</button>
+                <button id="submit-listening" class="w-full mt-8 bg-indigo-600 text-white font-black py-5 rounded-3xl uppercase tracking-widest hidden animate-pulse">Check Results</button>
             </div>
         </div>
 
-        <div id="view-listen-results" class="hidden space-y-4 flex-1">
-            <div class="bg-white p-8 rounded-[3.5rem] shadow-2xl border border-slate-100 text-center animate-slide-up">
-                <div class="w-24 h-24 rounded-full border-8 border-indigo-600 flex items-center justify-center mx-auto mb-6"><span id="listen-score-text" class="text-2xl font-black">0%</span></div>
-                <p id="listen-final-transcript" class="text-left bg-slate-50 p-6 rounded-3xl border border-slate-100 text-slate-800 leading-relaxed font-medium italic overflow-y-auto max-h-[35vh]"></p>
-                <button class="exit-view w-full mt-8 bg-blue-600 text-white font-black py-5 rounded-3xl">Back to Menu</button>
+        <div id="view-listen-results" class="hidden space-y-4 flex-1 text-center">
+            <div class="bg-white p-8 rounded-[3.5rem] shadow-2xl border border-slate-100 animate-slide-up">
+                <div class="w-24 h-24 rounded-full border-8 border-indigo-600 flex items-center justify-center mx-auto mb-6"><span id="listen-score-text" class="text-2xl font-black text-indigo-600">0%</span></div>
+                <p id="listen-final-transcript" class="text-left bg-slate-50 p-6 rounded-3xl text-slate-800 italic overflow-y-auto max-h-[35vh]"></p>
+                <button class="exit-view w-full mt-8 bg-blue-600 text-white font-black py-5 rounded-3xl">Done</button>
             </div>
         </div>
 
@@ -108,11 +118,11 @@
                             <button id="news-turtle-btn" class="w-10 h-10 bg-slate-800 text-white rounded-full flex items-center justify-center shadow-lg">🐢</button>
                         </div>
                     </div>
-                    <h2 id="news-title" class="text-xl font-black text-slate-800"></h2>
+                    <h2 id="news-title" class="text-xl font-black text-slate-800 italic"></h2>
                 </div>
                 <div class="flex-1 overflow-y-auto p-4 space-y-2" id="news-sentences-container"></div>
                 <div id="news-vocab-section" class="p-6 bg-slate-50 border-t border-slate-100">
-                    <p class="text-[9px] font-black text-slate-400 uppercase mb-3 tracking-widest">Vocabulaire Clé</p>
+                    <p class="text-[9px] font-black text-slate-400 uppercase mb-3 tracking-widest">Mots Importants</p>
                     <div id="news-vocab-chips" class="flex flex-wrap"></div>
                 </div>
                 <div class="p-4 bg-white"><button id="next-news-btn" class="w-full bg-emerald-600 text-white font-black py-4 rounded-2xl shadow-lg">Next Article →</button></div>
@@ -121,16 +131,15 @@
 
         <div id="view-settings" class="hidden fixed inset-0 bg-white z-50 p-8 flex flex-col">
             <h2 class="text-3xl font-black text-slate-900 mb-8 tracking-tighter">Settings</h2>
-            <div class="space-y-4 flex-1 overflow-y-auto">
-                <input type="password" id="api-key" placeholder="Gemini API Key..." class="w-full p-5 bg-slate-50 rounded-2xl border">
-                <button id="btn-test-api" class="w-full py-3 bg-blue-50 text-blue-600 rounded-xl font-black text-[10px] uppercase border">Test Connection</button>
+            <div class="space-y-4 flex-1">
+                <input type="password" id="api-key" placeholder="Gemini API Key..." class="w-full p-5 bg-slate-50 rounded-2xl border focus:border-blue-500 outline-none">
                 <div class="pt-8 space-y-3">
-                    <button id="btn-wipe-news" class="w-full p-5 bg-emerald-50 text-emerald-700 rounded-2xl font-bold">Wipe News</button>
-                    <button id="btn-wipe-listening" class="w-full p-5 bg-indigo-50 text-indigo-700 rounded-2xl font-bold">Wipe Listening</button>
-                    <button id="btn-wipe-vault" class="w-full p-5 bg-orange-50 text-orange-700 rounded-2xl font-bold">Wipe Dictation</button>
+                    <button id="btn-wipe-news" class="w-full p-5 bg-slate-100 text-slate-700 rounded-2xl font-bold flex justify-between items-center">Wipe News <span>🗑️</span></button>
+                    <button id="btn-wipe-listening" class="w-full p-5 bg-slate-100 text-slate-700 rounded-2xl font-bold flex justify-between items-center">Wipe Listening <span>🗑️</span></button>
+                    <button id="btn-wipe-vault" class="w-full p-5 bg-slate-100 text-slate-700 rounded-2xl font-bold flex justify-between items-center">Wipe Dictation <span>🗑️</span></button>
                 </div>
             </div>
-            <button id="save-settings" class="w-full bg-blue-600 text-white font-black py-5 rounded-[2rem] mt-4 shadow-xl">Save & Close</button>
+            <button id="save-settings" class="w-full bg-blue-600 text-white font-black py-5 rounded-[2rem] mt-auto shadow-xl">Save & Close</button>
         </div>
     </div>
 
@@ -141,14 +150,49 @@
             let nVault = JSON.parse(localStorage.getItem('news_vault') || '[]');
             let currentItem = null;
 
+            // SMART MODAL LOGIC
+            const showModal = (title, body, icon = '⚠️') => {
+                document.getElementById('modal-title').innerText = title;
+                document.getElementById('modal-body').innerText = body;
+                document.getElementById('modal-icon').innerText = icon;
+                document.getElementById('modal-container').classList.remove('hidden');
+            };
+            document.getElementById('modal-close').onclick = () => document.getElementById('modal-container').classList.add('hidden');
+
             const views = { menu: document.getElementById('view-menu'), dictation: document.getElementById('view-dictation'), listening: document.getElementById('view-listening'), listenResults: document.getElementById('view-listen-results'), news: document.getElementById('view-news'), settings: document.getElementById('view-settings') };
             const showToast = (msg) => { const t = document.createElement('div'); t.className = 'toast animate-slide-up'; t.innerHTML = `<span>✨</span> ${msg}`; document.getElementById('toast-container').appendChild(t); setTimeout(() => t.remove(), 3000); };
             const switchView = (t) => { Object.values(views).forEach(v => v.classList.add('hidden')); if(views[t]) views[t].classList.remove('hidden'); };
             const updateUI = () => { document.getElementById('vault-count').innerText = vault.length; document.getElementById('listening-count').innerText = lVault.length; document.getElementById('news-count').innerText = nVault.length; localStorage.setItem('french_vault', JSON.stringify(vault)); localStorage.setItem('listening_vault', JSON.stringify(lVault)); localStorage.setItem('news_vault', JSON.stringify(nVault)); };
             const playAudio = (text, rate) => { window.speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(text); u.lang = 'fr-FR'; u.rate = rate; window.speechSynthesis.speak(u); };
 
+            // FUZZY SCORE LOGIC (Levenshtein)
+            const getSimilarity = (s1, s2) => {
+                const longer = s1.length < s2.length ? s2 : s1;
+                const shorter = s1.length < s2.length ? s1 : s2;
+                if (longer.length === 0) return 1.0;
+                const editDistance = (a, b) => {
+                    const costs = [];
+                    for (let i = 0; i <= a.length; i++) {
+                        let lastValue = i;
+                        for (let j = 0; j <= b.length; j++) {
+                            if (i === 0) costs[j] = j;
+                            else if (j > 0) {
+                                let newValue = costs[j - 1];
+                                if (a.charAt(i - 1) !== b.charAt(j - 1)) newValue = Math.min(Math.min(newValue, lastValue), costs[j]) + 1;
+                                costs[j - 1] = lastValue;
+                                lastValue = newValue;
+                            }
+                        }
+                        if (i > 0) costs[b.length] = lastValue;
+                    }
+                    return costs[b.length];
+                };
+                return (longer.length - editDistance(longer, shorter)) / parseFloat(longer.length);
+            };
+
             const apiCall = async (prompt) => {
                 const key = document.getElementById('api-key').value;
+                if(!key) { showModal("Key Missing", "Please add your Gemini API key in Settings first.", "🔑"); throw new Error("No Key"); }
                 const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${key}`, {
                     method: 'POST', headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({ contents: [{ parts: [{ text: prompt }]}] })
@@ -159,36 +203,13 @@
             };
 
             // REFILLS
-            document.getElementById('refill-btn').onclick = async () => { try { vault = [...vault, ...await apiCall('50 French sentences A1-B1. JSON: [{"text": "...", "english": "...", "level": "A1/A2/B1"}]')]; updateUI(); showToast("Dictation Refilled"); } catch(e){alert(e.message)} };
-            document.getElementById('refill-listening-btn').onclick = async () => { try { lVault = [...lVault, ...await apiCall('10 French stories A1-B1. JSON: [{"topic": "...", "transcript": "...", "level": "A1/A2/B1", "questions": [{"q": "...", "options": ["A", "B", "C"], "correct": 0}]}]')]; updateUI(); showToast("Listening Refilled"); } catch(e){alert(e.message)} };
-            document.getElementById('refill-news-btn').onclick = async () => { try { nVault = [...nVault, ...await apiCall('5 French news B1. Return exactly this JSON: [{"title": "...", "segments": [{"fr": "...", "en": "..."}], "vocab": {"verbs": [], "nouns": [], "connectors": []}}]')]; updateUI(); showToast("News Loaded"); } catch(e){alert(e.message)} };
+            document.getElementById('refill-btn').onclick = async () => { try { vault = [...vault, ...await apiCall('50 French sentences A1-B1. JSON: [{"text": "...", "english": "...", "level": "A1/A2/B1"}]')]; updateUI(); showToast("Dictation Loaded"); } catch(e){} };
+            document.getElementById('refill-listening-btn').onclick = async () => { try { lVault = [...lVault, ...await apiCall('10 French stories A1-B1. JSON: [{"topic": "...", "transcript": "...", "level": "A1/A2/B1", "questions": [{"q": "...", "options": ["A", "B", "C"], "correct": 0}]}]')]; updateUI(); showToast("Listening Loaded"); } catch(e){} };
+            document.getElementById('refill-news-btn').onclick = async () => { try { nVault = [...nVault, ...await apiCall('5 news B1. JSON: [{"title": "...", "segments": [{"fr": "...", "en": "..."}], "vocab": {"verbs": [], "nouns": [], "connectors": []}}]')]; updateUI(); showToast("News Loaded"); } catch(e){} };
 
-            // NEWS LOGIC
-            const setupNews = () => {
-                if(nVault.length === 0) return alert("Fetch News First!");
-                currentItem = nVault[0];
-                document.getElementById('news-title').innerText = currentItem.title;
-                const cont = document.getElementById('news-sentences-container'); cont.innerHTML = "";
-                currentItem.segments.forEach(seg => {
-                    const block = document.createElement('div'); block.className = "sentence-block";
-                    block.innerHTML = `<div class="flex justify-between gap-3"><p class="text-slate-800 font-bold italic flex-1">${seg.fr}</p><span class="text-xs opacity-20">👁️</span></div><p class="translation-text">${seg.en}</p>`;
-                    block.onclick = () => { block.querySelector('.translation-text').classList.toggle('hidden'); block.classList.toggle('bg-emerald-50'); };
-                    cont.appendChild(block);
-                });
-                const vCont = document.getElementById('news-vocab-chips'); vCont.innerHTML = "";
-                const cols = { verbs: 'bg-blue-50 text-blue-600', nouns: 'bg-emerald-50 text-emerald-600', connectors: 'bg-purple-50 text-purple-600' };
-                for(let cat in currentItem.vocab) currentItem.vocab[cat].forEach(w => {
-                    const s = document.createElement('span'); s.className = `vocab-chip ${cols[cat]||'bg-slate-50'}`; s.innerText = w; vCont.appendChild(s);
-                });
-                switchView('news');
-            };
-
-            document.getElementById('start-news').onclick = setupNews;
-            document.getElementById('next-news-btn').onclick = () => { nVault.shift(); updateUI(); setupNews(); };
-
-            // DICTATION LOGIC
+            // DICTATION
             document.getElementById('start-dictation').onclick = () => {
-                if(vault.length === 0) return alert("Refill first!");
+                if(vault.length === 0) return showModal("Empty Vault", "Click Refill to get fresh sentences.", "📭");
                 currentItem = vault[0];
                 document.getElementById('level-tag').innerText = currentItem.level;
                 document.getElementById('user-input').value = "";
@@ -199,22 +220,24 @@
             document.getElementById('check-btn').onclick = () => {
                 const inp = document.getElementById('user-input').value.toLowerCase().replace(/[.,!?]/g, "").trim();
                 const tgt = currentItem.text.toLowerCase().replace(/[.,!?]/g, "").trim();
-                document.getElementById('score-display').innerText = (inp === tgt ? 100 : 0) + "%";
+                const score = Math.round(getSimilarity(inp, tgt) * 100);
+                document.getElementById('score-display').innerText = score + "%";
+                document.getElementById('score-display').className = `text-6xl font-black text-center mb-6 ${score > 90 ? 'text-emerald-500' : 'text-orange-500'}`;
                 document.getElementById('correct-text').innerText = currentItem.text;
                 document.getElementById('result-area').classList.remove('hidden');
                 document.getElementById('check-btn').classList.add('hidden');
                 vault.shift(); updateUI();
             };
-            ['é','à','è','ç','î','û'].forEach(a => {
+            ['é','à','è','ç','î','û','ô'].forEach(a => {
                 const b = document.createElement('button'); b.className="accent-btn"; b.innerText=a;
                 b.onclick = () => { const area = document.getElementById('user-input'); area.value += a; area.focus(); };
-                if(document.getElementById('accents-container')) document.getElementById('accents-container').appendChild(b);
+                document.getElementById('accents-container').appendChild(b);
             });
             document.getElementById('next-btn').onclick = () => document.getElementById('start-dictation').click();
 
-            // LISTENING LOGIC
+            // LISTENING
             document.getElementById('start-listening').onclick = () => {
-                if(lVault.length === 0) return alert("Refill first!");
+                if(lVault.length === 0) return showModal("Empty Vault", "Click Refill for listening exercises.", "🎧");
                 currentItem = lVault[0];
                 document.getElementById('listen-level-tag').innerText = currentItem.level;
                 document.getElementById('listen-topic').innerText = currentItem.topic;
@@ -244,7 +267,29 @@
                 lVault.shift(); updateUI(); switchView('listenResults');
             };
 
-            // GLOBALS & AUDIO
+            // NEWS
+            const setupNews = () => {
+                if(nVault.length === 0) return showModal("No News", "Fetch some articles in the main menu.", "🗞️");
+                currentItem = nVault[0];
+                document.getElementById('news-title').innerText = currentItem.title;
+                const cont = document.getElementById('news-sentences-container'); cont.innerHTML = "";
+                currentItem.segments.forEach(seg => {
+                    const block = document.createElement('div'); block.className = "sentence-block";
+                    block.innerHTML = `<div class="flex justify-between gap-3"><p class="text-slate-800 font-bold italic flex-1">${seg.fr}</p><span class="text-xs opacity-20">👁️</span></div><p class="translation-text">${seg.en}</p>`;
+                    block.onclick = () => { block.querySelector('.translation-text').classList.toggle('hidden'); block.classList.toggle('bg-emerald-50'); };
+                    cont.appendChild(block);
+                });
+                const vCont = document.getElementById('news-vocab-chips'); vCont.innerHTML = "";
+                const cols = { verbs: 'bg-blue-50 text-blue-600', nouns: 'bg-emerald-50 text-emerald-600', connectors: 'bg-purple-50 text-purple-600' };
+                for(let cat in currentItem.vocab) currentItem.vocab[cat].forEach(w => {
+                    const s = document.createElement('span'); s.className = `vocab-chip ${cols[cat]||'bg-slate-50'}`; s.innerText = w; vCont.appendChild(s);
+                });
+                switchView('news');
+            };
+            document.getElementById('start-news').onclick = setupNews;
+            document.getElementById('next-news-btn').onclick = () => { nVault.shift(); updateUI(); setupNews(); };
+
+            // SYSTEM
             document.getElementById('news-play-btn').onclick = () => playAudio(currentItem.segments.map(s=>s.fr).join(". "), 0.85);
             document.getElementById('news-turtle-btn').onclick = () => playAudio(currentItem.segments.map(s=>s.fr).join(". "), 0.6);
             document.getElementById('listen-play-btn').onclick = () => playAudio(currentItem.transcript, 0.85);
@@ -255,9 +300,9 @@
             document.querySelectorAll('.exit-view').forEach(b => b.onclick = () => switchView('menu'));
             document.getElementById('save-settings').onclick = () => { localStorage.setItem('gemini_api_key', document.getElementById('api-key').value); switchView('menu'); };
             
-            document.getElementById('btn-wipe-news').onclick = () => { nVault = []; updateUI(); showToast("Wiped"); };
-            document.getElementById('btn-wipe-listening').onclick = () => { lVault = []; updateUI(); showToast("Wiped"); };
-            document.getElementById('btn-wipe-vault').onclick = () => { vault = []; updateUI(); showToast("Wiped"); };
+            document.getElementById('btn-wipe-news').onclick = () => { nVault = []; updateUI(); showToast("Wiped News"); };
+            document.getElementById('btn-wipe-listening').onclick = () => { lVault = []; updateUI(); showToast("Wiped Listening"); };
+            document.getElementById('btn-wipe-vault').onclick = () => { vault = []; updateUI(); showToast("Wiped Dictation"); };
 
             if(localStorage.getItem('gemini_api_key')) document.getElementById('api-key').value = localStorage.getItem('gemini_api_key');
             updateUI();
