@@ -3,15 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>French Lab v3.6 - Master</title>
+    <title>French Lab v3.8 - The Master Suite</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         .accent-btn { @apply bg-slate-100 p-2 rounded-xl text-sm font-bold w-12 h-12 flex items-center justify-center active:bg-blue-600 active:text-white transition-all shadow-sm; }
         ::-webkit-scrollbar { display: none; }
         @keyframes slideUp { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-        .animate-slide-up { animation: slideUp 0.2s ease-out; }
+        .animate-slide-up { animation: slideUp 0.3s ease-out; }
         .toast { position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%); z-index: 100; @apply bg-slate-800 text-white px-6 py-3 rounded-2xl shadow-2xl text-sm font-bold flex items-center gap-3; }
-        .tab-btn-active { @apply border-b-4 border-emerald-600 text-emerald-600 font-black; }
+        .vocab-chip { @apply inline-block px-3 py-1 rounded-full text-[10px] font-bold mr-2 mb-2 border; }
+        .sentence-block { @apply p-3 rounded-2xl transition-all duration-300 hover:bg-emerald-50/50 cursor-pointer border border-transparent hover:border-emerald-100; }
+        .translation-text { @apply text-slate-400 text-sm font-medium mt-1 leading-snug hidden animate-slide-up; }
     </style>
 </head>
 <body class="bg-slate-50 min-h-screen font-sans text-slate-900 select-none">
@@ -23,40 +25,34 @@
         <header class="flex justify-between items-center mb-6 py-2">
             <div>
                 <h1 class="text-2xl font-black text-blue-900 tracking-tight">French Lab</h1>
-                <p class="text-[10px] text-blue-500 font-black uppercase tracking-[0.15em]">Master Suite • v3.6</p>
+                <p class="text-[10px] text-blue-500 font-black uppercase tracking-[0.15em]">Immersion Suite • v3.8</p>
             </div>
             <button id="settings-trigger" class="bg-white shadow-md p-3 rounded-2xl border border-slate-100 active:rotate-45 transition-transform">⚙️</button>
         </header>
 
         <div id="view-menu" class="space-y-4">
             <div class="bg-emerald-600 rounded-[2.5rem] p-6 text-white shadow-xl relative overflow-hidden">
-                <div class="relative z-10">
-                    <div class="flex justify-between items-start mb-4">
-                        <div><p class="text-[10px] font-black uppercase opacity-70 tracking-widest">Le Journal</p><h2 class="text-3xl font-black"><span id="news-count">0</span> Articles</h2></div>
-                        <button id="refill-news-btn" class="bg-white/20 px-4 py-2 rounded-xl text-[10px] font-black uppercase backdrop-blur-md">Fetch News</button>
-                    </div>
-                    <button id="start-news" class="w-full bg-white text-emerald-600 py-4 rounded-2xl font-black text-sm shadow-lg active:scale-95 transition-all">Read News</button>
+                <div class="flex justify-between items-start mb-4">
+                    <div><p class="text-[10px] font-black uppercase opacity-70 tracking-widest">Le Journal</p><h2 class="text-3xl font-black"><span id="news-count">0</span> Articles</h2></div>
+                    <button id="refill-news-btn" class="bg-white/20 px-4 py-2 rounded-xl text-[10px] font-black uppercase">Fetch News</button>
                 </div>
+                <button id="start-news" class="w-full bg-white text-emerald-600 py-4 rounded-2xl font-black text-sm shadow-lg active:scale-95 transition-all">Read Immersion News</button>
             </div>
 
             <div class="bg-blue-600 rounded-[2.5rem] p-6 text-white shadow-xl relative overflow-hidden">
-                <div class="relative z-10">
-                    <div class="flex justify-between items-start mb-4">
-                        <div><p class="text-[10px] font-black uppercase opacity-70 tracking-widest">Dictation</p><h2 class="text-3xl font-black"><span id="vault-count">0</span> Items</h2></div>
-                        <button id="refill-btn" class="bg-white/20 px-4 py-2 rounded-xl text-[10px] font-black uppercase backdrop-blur-md">Refill</button>
-                    </div>
-                    <button id="start-dictation" class="w-full bg-white text-blue-600 py-4 rounded-2xl font-black text-sm shadow-lg active:scale-95 transition-all">Start Dictation</button>
+                <div class="flex justify-between items-start mb-4">
+                    <div><p class="text-[10px] font-black uppercase opacity-70 tracking-widest">Dictation</p><h2 class="text-3xl font-black"><span id="vault-count">0</span> Items</h2></div>
+                    <button id="refill-btn" class="bg-white/20 px-4 py-2 rounded-xl text-[10px] font-black uppercase">Refill</button>
                 </div>
+                <button id="start-dictation" class="w-full bg-white text-blue-600 py-4 rounded-2xl font-black text-sm shadow-lg active:scale-95 transition-all">Start Dictation</button>
             </div>
 
             <div class="bg-indigo-900 rounded-[2.5rem] p-6 text-white shadow-xl relative overflow-hidden">
-                <div class="relative z-10">
-                    <div class="flex justify-between items-start mb-4">
-                        <div><p class="text-[10px] font-black uppercase opacity-70 tracking-widest text-indigo-300">Listening Lab</p><h2 class="text-3xl font-black"><span id="listening-count">0</span> Stories</h2></div>
-                        <button id="refill-listening-btn" class="bg-indigo-700 px-4 py-2 rounded-xl text-[10px] font-black uppercase">Refill</button>
-                    </div>
-                    <button id="start-listening" class="w-full bg-indigo-500 text-white py-4 rounded-2xl font-black text-sm shadow-lg active:scale-95 transition-all">Start Listening</button>
+                <div class="flex justify-between items-start mb-4">
+                    <div><p class="text-[10px] font-black uppercase opacity-70 tracking-widest text-indigo-300">Listening Lab</p><h2 class="text-3xl font-black"><span id="listening-count">0</span> Stories</h2></div>
+                    <button id="refill-listening-btn" class="bg-indigo-700 px-4 py-2 rounded-xl text-[10px] font-black uppercase">Refill</button>
                 </div>
+                <button id="start-listening" class="w-full bg-indigo-500 text-white py-4 rounded-2xl font-black text-sm shadow-lg active:scale-95 transition-all">Start Listening</button>
             </div>
         </div>
 
@@ -66,30 +62,30 @@
                 <div id="level-tag" class="inline-block px-4 py-1.5 rounded-full bg-blue-50 text-blue-600 text-[10px] font-black uppercase mb-6 tracking-widest">LEVEL</div>
                 <div class="flex flex-col gap-3 mb-8">
                     <button id="play-btn" class="w-full bg-blue-600 text-white font-black py-6 rounded-3xl shadow-xl text-xl">Listen 🔊</button>
-                    <button id="turtle-btn" class="w-full bg-slate-800 text-white font-bold py-4 rounded-2xl text-xs uppercase tracking-widest">Slow 🐢</button>
+                    <button id="turtle-btn" class="w-full bg-slate-800 text-white font-bold py-4 rounded-2xl text-[10px] uppercase">Slow 🐢</button>
                 </div>
                 <textarea id="user-input" rows="3" placeholder="Tapez ici..." class="w-full p-6 bg-slate-50 border-2 border-transparent focus:border-blue-500 rounded-[2rem] outline-none mb-6 resize-none font-medium leading-relaxed"></textarea>
-                <div class="flex justify-center gap-2 mb-8"><button class="accent-btn">é</button><button class="accent-btn">à</button><button class="accent-btn">è</button><button class="accent-btn">ç</button></div>
+                <div class="flex justify-center gap-2 mb-8" id="accents-container"></div>
                 <button id="check-btn" class="w-full bg-blue-600 text-white font-black py-5 rounded-3xl uppercase tracking-widest shadow-lg">Verify</button>
             </div>
-            <div id="result-area" class="hidden bg-white p-8 rounded-[3.5rem] border border-slate-200 shadow-2xl animate-slide-up">
+            <div id="result-area" class="hidden bg-white p-8 rounded-[3.5rem] border border-slate-200 shadow-2xl animate-slide-up mt-4">
                 <p id="score-display" class="text-6xl font-black text-center mb-6">0%</p>
-                <div class="p-5 bg-slate-50 rounded-2xl mb-4"><p class="text-[9px] font-black text-slate-400 uppercase mb-2">Correct French</p><p id="correct-text" class="text-slate-900 font-bold"></p></div>
-                <button id="next-btn" class="w-full bg-blue-600 text-white font-black py-5 rounded-3xl shadow-lg">Next →</button>
+                <div class="p-5 bg-slate-50 rounded-2xl mb-4"><p class="text-[9px] font-black text-slate-400 uppercase mb-2">Correct Answer</p><p id="correct-text" class="text-slate-900 font-bold"></p></div>
+                <button id="next-btn" class="w-full bg-blue-600 text-white font-black py-5 rounded-3xl">Next →</button>
             </div>
         </div>
 
         <div id="view-listening" class="hidden space-y-4 flex-1">
             <button class="exit-view text-xs font-black text-blue-600 uppercase mb-2">← Back</button>
             <div class="bg-white p-6 rounded-[2.5rem] shadow-sm border border-slate-100 animate-slide-up">
-                <div id="listen-level-tag" class="inline-block px-4 py-1.5 rounded-full bg-indigo-50 text-indigo-600 text-[10px] font-black uppercase mb-4 tracking-widest">A1</div>
-                <h3 id="listen-topic" class="text-xl font-black text-slate-800 mb-6 italic">Topic Title</h3>
+                <div id="listen-level-tag" class="inline-block px-4 py-1.5 rounded-full bg-indigo-50 text-indigo-600 text-[10px] font-black uppercase mb-4 tracking-widest">LEVEL</div>
+                <h3 id="listen-topic" class="text-xl font-black text-slate-800 mb-6 italic"></h3>
                 <div class="flex gap-2 mb-8">
-                    <button id="listen-play-btn" class="flex-1 bg-indigo-600 text-white font-black py-5 rounded-2xl shadow-lg">Listen 🔊</button>
+                    <button id="listen-play-btn" class="flex-1 bg-indigo-600 text-white font-black py-5 rounded-2xl shadow-lg">Play Story 🔊</button>
                     <button id="listen-turtle-btn" class="bg-slate-800 text-white px-6 rounded-2xl font-bold text-xs">Slow 🐢</button>
                 </div>
                 <div id="mcq-container" class="space-y-6 text-left max-h-[40vh] overflow-y-auto px-1"></div>
-                <button id="submit-listening" class="w-full mt-8 bg-indigo-600 text-white font-black py-5 rounded-3xl uppercase tracking-widest hidden animate-pulse">Check Answers</button>
+                <button id="submit-listening" class="w-full mt-8 bg-indigo-600 text-white font-black py-5 rounded-3xl uppercase tracking-widest hidden animate-pulse">Check Quiz</button>
             </div>
         </div>
 
@@ -97,35 +93,41 @@
             <div class="bg-white p-8 rounded-[3.5rem] shadow-2xl border border-slate-100 text-center animate-slide-up">
                 <div class="w-24 h-24 rounded-full border-8 border-indigo-600 flex items-center justify-center mx-auto mb-6"><span id="listen-score-text" class="text-2xl font-black">0%</span></div>
                 <p id="listen-final-transcript" class="text-left bg-slate-50 p-6 rounded-3xl border border-slate-100 text-slate-800 leading-relaxed font-medium italic overflow-y-auto max-h-[35vh]"></p>
-                <button class="exit-view w-full mt-8 bg-blue-600 text-white font-black py-5 rounded-3xl">Done</button>
+                <button class="exit-view w-full mt-8 bg-blue-600 text-white font-black py-5 rounded-3xl">Back to Menu</button>
             </div>
         </div>
 
         <div id="view-news" class="hidden space-y-4 flex-1 flex flex-col">
             <button class="exit-view text-xs font-black text-blue-600 uppercase mb-2">← Back</button>
             <div class="bg-white rounded-[2.5rem] shadow-sm border border-slate-100 flex-1 flex flex-col overflow-hidden animate-slide-up">
-                <div class="p-6 pb-2">
+                <div class="p-6 border-b border-slate-50">
                     <div class="flex justify-between items-center mb-2">
-                        <span class="px-3 py-1 bg-emerald-50 text-emerald-600 text-[10px] font-black rounded-full uppercase tracking-tighter">B1 News</span>
-                        <div class="flex gap-2"><button id="news-play-btn" class="w-10 h-10 bg-emerald-600 text-white rounded-full flex items-center justify-center text-sm shadow-lg">🔊</button><button id="news-turtle-btn" class="w-10 h-10 bg-slate-800 text-white rounded-full flex items-center justify-center text-sm shadow-lg">🐢</button></div>
+                        <span class="px-3 py-1 bg-emerald-50 text-emerald-600 text-[10px] font-black rounded-full uppercase tracking-widest">Immersion News</span>
+                        <div class="flex gap-2">
+                            <button id="news-play-btn" class="w-10 h-10 bg-emerald-600 text-white rounded-full flex items-center justify-center shadow-lg">🔊</button>
+                            <button id="news-turtle-btn" class="w-10 h-10 bg-slate-800 text-white rounded-full flex items-center justify-center shadow-lg">🐢</button>
+                        </div>
                     </div>
-                    <h2 id="news-title" class="text-xl font-black text-slate-800 leading-tight"></h2>
+                    <h2 id="news-title" class="text-xl font-black text-slate-800"></h2>
                 </div>
-                <div class="flex border-b border-slate-100"><button id="tab-article" class="flex-1 py-3 text-[10px] font-bold uppercase tracking-widest tab-btn-active">Article</button><button id="tab-vocab" class="flex-1 py-3 text-[10px] font-bold uppercase tracking-widest text-slate-400">Vocabulaire</button><button id="tab-english" class="flex-1 py-3 text-[10px] font-bold uppercase tracking-widest text-slate-400">English</button></div>
-                <div class="flex-1 overflow-y-auto p-6"><div id="content-article" class="text-slate-800 leading-relaxed font-medium italic text-lg"></div><div id="content-vocab" class="hidden space-y-4"></div><div id="content-english" class="hidden text-slate-500 leading-relaxed font-medium text-lg"></div></div>
-                <div class="p-4 border-t border-slate-50"><button id="next-news-btn" class="w-full bg-emerald-600 text-white font-black py-4 rounded-2xl shadow-lg">Prochain →</button></div>
+                <div class="flex-1 overflow-y-auto p-4 space-y-2" id="news-sentences-container"></div>
+                <div id="news-vocab-section" class="p-6 bg-slate-50 border-t border-slate-100">
+                    <p class="text-[9px] font-black text-slate-400 uppercase mb-3 tracking-widest">Vocabulaire Clé</p>
+                    <div id="news-vocab-chips" class="flex flex-wrap"></div>
+                </div>
+                <div class="p-4 bg-white"><button id="next-news-btn" class="w-full bg-emerald-600 text-white font-black py-4 rounded-2xl shadow-lg">Next Article →</button></div>
             </div>
         </div>
 
         <div id="view-settings" class="hidden fixed inset-0 bg-white z-50 p-8 flex flex-col">
             <h2 class="text-3xl font-black text-slate-900 mb-8 tracking-tighter">Settings</h2>
             <div class="space-y-4 flex-1 overflow-y-auto">
-                <input type="password" id="api-key" placeholder="Gemini API Key..." class="w-full p-5 bg-slate-50 rounded-2xl border border-slate-200 font-mono text-xs">
-                <button id="btn-test-api" class="w-full py-3 bg-blue-50 text-blue-600 rounded-xl font-black text-[10px] uppercase border border-blue-100">Test Connection</button>
+                <input type="password" id="api-key" placeholder="Gemini API Key..." class="w-full p-5 bg-slate-50 rounded-2xl border">
+                <button id="btn-test-api" class="w-full py-3 bg-blue-50 text-blue-600 rounded-xl font-black text-[10px] uppercase border">Test Connection</button>
                 <div class="pt-8 space-y-3">
-                    <button id="btn-wipe-news" class="w-full p-5 bg-emerald-50 text-emerald-700 rounded-2xl font-bold flex justify-between">Wipe News</button>
-                    <button id="btn-wipe-listening" class="w-full p-5 bg-indigo-50 text-indigo-700 rounded-2xl font-bold flex justify-between">Wipe Listening</button>
-                    <button id="btn-wipe-vault" class="w-full p-5 bg-orange-50 text-orange-700 rounded-2xl font-bold flex justify-between">Wipe Dictation</button>
+                    <button onclick="localStorage.setItem('news_vault', '[]'); updateUI();" class="w-full p-5 bg-emerald-50 text-emerald-700 rounded-2xl font-bold flex justify-between">Wipe News</button>
+                    <button onclick="localStorage.setItem('listening_vault', '[]'); updateUI();" class="w-full p-5 bg-indigo-50 text-indigo-700 rounded-2xl font-bold flex justify-between">Wipe Listening</button>
+                    <button onclick="localStorage.setItem('french_vault', '[]'); updateUI();" class="w-full p-5 bg-orange-50 text-orange-700 rounded-2xl font-bold flex justify-between">Wipe Dictation</button>
                 </div>
             </div>
             <button id="save-settings" class="w-full bg-blue-600 text-white font-black py-5 rounded-[2rem] mt-4 shadow-xl">Save & Close</button>
@@ -142,11 +144,9 @@
             const views = { menu: document.getElementById('view-menu'), dictation: document.getElementById('view-dictation'), listening: document.getElementById('view-listening'), listenResults: document.getElementById('view-listen-results'), news: document.getElementById('view-news'), settings: document.getElementById('view-settings') };
             const showToast = (msg) => { const t = document.createElement('div'); t.className = 'toast animate-slide-up'; t.innerHTML = `<span>✨</span> ${msg}`; document.getElementById('toast-container').appendChild(t); setTimeout(() => t.remove(), 3000); };
             const switchView = (t) => { Object.values(views).forEach(v => v.classList.add('hidden')); if(views[t]) views[t].classList.remove('hidden'); };
-            const sanitizeJSON = (raw) => { const s = raw.indexOf("["); const e = raw.lastIndexOf("]") + 1; return JSON.parse(raw.substring(s, e)); };
             const updateUI = () => { document.getElementById('vault-count').innerText = vault.length; document.getElementById('listening-count').innerText = lVault.length; document.getElementById('news-count').innerText = nVault.length; localStorage.setItem('french_vault', JSON.stringify(vault)); localStorage.setItem('listening_vault', JSON.stringify(lVault)); localStorage.setItem('news_vault', JSON.stringify(nVault)); };
             const playAudio = (text, rate) => { window.speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(text); u.lang = 'fr-FR'; u.rate = rate; window.speechSynthesis.speak(u); };
 
-            // REFILL LOGIC
             const apiCall = async (prompt) => {
                 const key = document.getElementById('api-key').value;
                 const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${key}`, {
@@ -154,13 +154,14 @@
                     body: JSON.stringify({ contents: [{ parts: [{ text: prompt }]}] })
                 });
                 const d = await resp.json();
-                if(d.error) throw new Error(d.error.message);
-                return sanitizeJSON(d.candidates[0].content.parts[0].text);
+                const raw = d.candidates[0].content.parts[0].text;
+                return JSON.parse(raw.substring(raw.indexOf("["), raw.lastIndexOf("]") + 1));
             };
 
-            document.getElementById('refill-btn').onclick = async () => { try { vault = [...vault, ...await apiCall('50 French sentences A1-B1. JSON ONLY: [{"text": "...", "english": "...", "level": "A1/A2/B1"}]')]; updateUI(); showToast("Dictation Ready"); } catch(e){alert(e.message)} };
-            document.getElementById('refill-listening-btn').onclick = async () => { try { lVault = [...lVault, ...await apiCall('10 French stories A1-B1. 100+ words. 5 inference questions. JSON ONLY: [{"topic": "...", "transcript": "...", "level": "A1/A2/B1", "questions": [{"q": "...", "options": ["A", "B", "C"], "correct": 0}]}]')]; updateUI(); showToast("Listening Ready"); } catch(e){alert(e.message)} };
-            document.getElementById('refill-news-btn').onclick = async () => { try { nVault = [...nVault, ...await apiCall('5 French news articles B1. 150 words. JSON ONLY: [{"title": "...", "article": "...", "english": "...", "vocab": {"nouns": [], "verbs": [], "adjectives": [], "connectors": []}}]')]; updateUI(); showToast("News Loaded"); } catch(e){alert(e.message)} };
+            // REFILLS
+            document.getElementById('refill-btn').onclick = async () => { try { vault = [...vault, ...await apiCall('50 French sentences A1-B1. JSON: [{"text": "...", "english": "...", "level": "A1/A2/B1"}]')]; updateUI(); showToast("Dictation Refilled"); } catch(e){alert(e.message)} };
+            document.getElementById('refill-listening-btn').onclick = async () => { try { lVault = [...lVault, ...await apiCall('10 French stories A1-B1. 100+ words. 5 inference-based questions. JSON: [{"topic": "...", "transcript": "...", "level": "A1/A2/B1", "questions": [{"q": "...", "options": ["A", "B", "C"], "correct": 0}]}]')]; updateUI(); showToast("Listening Refilled"); } catch(e){alert(e.message)} };
+            document.getElementById('refill-news-btn').onclick = async () => { try { nVault = [...nVault, ...await apiCall('5 French news B1. JSON ONLY: [{"title": "...", "segments": [{"fr": "French", "en": "English"}], "vocab": {"verbs": [], "nouns": [], "connectors": []}}]')]; updateUI(); showToast("Immersion News Loaded"); } catch(e){alert(e.message)} };
 
             // DICTATION LOGIC
             document.getElementById('start-dictation').onclick = () => {
@@ -175,13 +176,17 @@
             document.getElementById('check-btn').onclick = () => {
                 const inp = document.getElementById('user-input').value.toLowerCase().replace(/[.,!?]/g, "").trim();
                 const tgt = currentItem.text.toLowerCase().replace(/[.,!?]/g, "").trim();
-                const score = inp === tgt ? 100 : 0;
-                document.getElementById('score-display').innerText = score + "%";
+                document.getElementById('score-display').innerText = (inp === tgt ? 100 : 0) + "%";
                 document.getElementById('correct-text').innerText = currentItem.text;
                 document.getElementById('result-area').classList.remove('hidden');
                 document.getElementById('check-btn').classList.add('hidden');
                 vault.shift(); updateUI();
             };
+            ['é','à','è','ç','î','û'].forEach(a => {
+                const b = document.createElement('button'); b.className="accent-btn"; b.innerText=a;
+                b.onclick = () => { const area = document.getElementById('user-input'); area.value += a; area.focus(); };
+                document.getElementById('accents-container').appendChild(b);
+            });
             document.getElementById('next-btn').onclick = () => document.getElementById('start-dictation').click();
 
             // LISTENING LOGIC
@@ -191,16 +196,15 @@
                 document.getElementById('listen-level-tag').innerText = currentItem.level;
                 document.getElementById('listen-topic').innerText = currentItem.topic;
                 const container = document.getElementById('mcq-container'); container.innerHTML = "";
-                currentItem.questions.forEach((q, qIdx) => {
+                currentItem.questions.forEach((q, i) => {
                     const d = document.createElement('div'); d.className = "space-y-3";
-                    d.innerHTML = `<p class="font-black text-sm">${qIdx + 1}. ${q.q}</p>`;
-                    q.options.forEach((opt, oIdx) => {
-                        const b = document.createElement('button');
-                        b.className = "w-full text-left p-4 rounded-2xl border-2 border-slate-50 bg-slate-50 text-xs font-bold active:bg-indigo-100";
+                    d.innerHTML = `<p class="font-black text-sm">${i+1}. ${q.q}</p>`;
+                    q.options.forEach((opt, oi) => {
+                        const b = document.createElement('button'); b.className = "w-full text-left p-4 rounded-2xl border-2 border-slate-50 bg-slate-50 text-xs font-bold";
                         b.innerText = opt;
                         b.onclick = () => {
-                            d.querySelectorAll('button').forEach(btn => btn.classList.remove('border-indigo-600', 'bg-white', 'text-indigo-600'));
-                            b.classList.add('border-indigo-600', 'bg-white', 'text-indigo-600'); b.dataset.selected = oIdx;
+                            d.querySelectorAll('button').forEach(btn => btn.classList.remove('border-indigo-600', 'bg-white'));
+                            b.classList.add('border-indigo-600', 'bg-white'); b.dataset.selected = oi;
                             if(document.querySelectorAll('[data-selected]').length === currentItem.questions.length) document.getElementById('submit-listening').classList.remove('hidden');
                         };
                         d.appendChild(b);
@@ -210,53 +214,40 @@
                 switchView('listening');
             };
             document.getElementById('submit-listening').onclick = () => {
-                const sel = document.querySelectorAll('[data-selected]');
-                let corr = 0; sel.forEach((s, i) => { if(parseInt(s.dataset.selected) === currentItem.questions[i].correct) corr++; });
-                document.getElementById('listen-score-text').innerText = Math.round((corr / currentItem.questions.length) * 100) + "%";
+                const sel = document.querySelectorAll('[data-selected]'); let corr = 0;
+                sel.forEach((s, i) => { if(parseInt(s.dataset.selected) === currentItem.questions[i].correct) corr++; });
+                document.getElementById('listen-score-text').innerText = Math.round((corr/currentItem.questions.length)*100) + "%";
                 document.getElementById('listen-final-transcript').innerText = currentItem.transcript;
                 lVault.shift(); updateUI(); switchView('listenResults');
             };
 
-            // NEWS LOGIC
+            // NEWS IMMERSION LOGIC
             document.getElementById('start-news').onclick = () => {
-                if(nVault.length === 0) return alert("Fetch News first!");
+                if(nVault.length === 0) return alert("Fetch News First!");
                 currentItem = nVault[0];
                 document.getElementById('news-title').innerText = currentItem.title;
-                document.getElementById('content-article').innerText = currentItem.article;
-                document.getElementById('content-english').innerText = currentItem.english;
-                const vCont = document.getElementById('content-vocab'); vCont.innerHTML = "";
-                for (const [cat, words] of Object.entries(currentItem.vocab)) {
-                    const div = document.createElement('div');
-                    div.innerHTML = `<p class="text-[9px] font-black uppercase text-emerald-600 mb-2">${cat}</p><p class="text-sm font-bold text-slate-700">${words.join(" • ")}</p>`;
-                    vCont.appendChild(div);
-                }
-                switchView('news'); document.getElementById('tab-article').click();
+                const cont = document.getElementById('news-sentences-container'); cont.innerHTML = "";
+                currentItem.segments.forEach(seg => {
+                    const block = document.createElement('div'); block.className = "sentence-block";
+                    block.innerHTML = `<div class="flex justify-between gap-3"><p class="text-slate-800 font-bold italic flex-1">${seg.fr}</p><span class="text-xs opacity-20">👁️</span></div><p class="translation-text">${seg.en}</p>`;
+                    block.onclick = () => { block.querySelector('.translation-text').classList.toggle('hidden'); block.classList.toggle('bg-emerald-50'); };
+                    cont.appendChild(block);
+                });
+                const vCont = document.getElementById('news-vocab-chips'); vCont.innerHTML = "";
+                const cols = { verbs: 'bg-blue-50 text-blue-600', nouns: 'bg-emerald-50 text-emerald-600', connectors: 'bg-purple-50 text-purple-600' };
+                for(let cat in currentItem.vocab) currentItem.vocab[cat].forEach(w => {
+                    const s = document.createElement('span'); s.className = `vocab-chip ${cols[cat]||'bg-slate-50'}`; s.innerText = w; vCont.appendChild(s);
+                });
+                switchView('news');
             };
-            ['article', 'vocab', 'english'].forEach(t => {
-                document.getElementById(`tab-${t}`).onclick = () => {
-                    ['article', 'vocab', 'english'].forEach(x => {
-                        document.getElementById(`tab-${x}`).className = "flex-1 py-3 text-[10px] font-bold uppercase tracking-widest text-slate-400";
-                        document.getElementById(`content-${x}`).classList.add('hidden');
-                    });
-                    document.getElementById(`tab-${t}`).className = "flex-1 py-3 text-[10px] font-bold uppercase tracking-widest tab-btn-active";
-                    document.getElementById(`content-${t}`).classList.remove('hidden');
-                };
-            });
-            document.getElementById('next-news-btn').onclick = () => { nVault.shift(); updateUI(); document.getElementById('start-news').click(); };
 
             // GLOBALS
-            document.getElementById('play-btn').onclick = () => playAudio(currentItem.text, 0.85);
-            document.getElementById('turtle-btn').onclick = () => playAudio(currentItem.text, 0.6);
+            document.getElementById('news-play-btn').onclick = () => playAudio(currentItem.segments.map(s=>s.fr).join(". "), 0.85);
             document.getElementById('listen-play-btn').onclick = () => playAudio(currentItem.transcript, 0.85);
-            document.getElementById('listen-turtle-btn').onclick = () => playAudio(currentItem.transcript, 0.6);
-            document.getElementById('news-play-btn').onclick = () => playAudio(currentItem.article, 0.85);
-            document.getElementById('news-turtle-btn').onclick = () => playAudio(currentItem.article, 0.6);
+            document.getElementById('play-btn').onclick = () => playAudio(currentItem.text, 0.85);
             document.getElementById('settings-trigger').onclick = () => switchView('settings');
             document.querySelectorAll('.exit-view').forEach(b => b.onclick = () => switchView('menu'));
             document.getElementById('save-settings').onclick = () => { localStorage.setItem('gemini_api_key', document.getElementById('api-key').value); switchView('menu'); };
-            document.getElementById('btn-test-api').onclick = async () => { try { await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${document.getElementById('api-key').value}`, {method: 'POST', body: JSON.stringify({contents: [{parts:[{text:"hi"}]}]})}); showToast("Connected!"); } catch(e){alert(e.message)} };
-
-            if(localStorage.getItem('gemini_api_key')) document.getElementById('api-key').value = localStorage.getItem('gemini_api_key');
             updateUI();
         });
     </script>
