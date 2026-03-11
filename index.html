@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>French Lab v3.3</title>
+    <title>French Lab v3.4</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         .accent-btn { @apply bg-slate-100 p-2 rounded-xl text-sm font-bold w-12 h-12 flex items-center justify-center active:bg-blue-600 active:text-white transition-all shadow-sm; }
@@ -12,7 +12,6 @@
         .animate-slide-up { animation: slideUp 0.3s ease-out; }
         .toast { position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%); z-index: 100; @apply bg-slate-800 text-white px-6 py-3 rounded-2xl shadow-2xl text-sm font-bold flex items-center gap-3; }
         .card-btn { @apply w-full flex items-center gap-4 bg-white p-5 rounded-[2rem] border border-slate-100 shadow-sm active:scale-[0.98] transition-all; }
-        .progress-bar { @apply h-1 bg-blue-500 transition-all duration-500 rounded-full; }
     </style>
 </head>
 <body class="bg-slate-50 min-h-screen font-sans text-slate-900 select-none">
@@ -24,7 +23,7 @@
         <header class="flex justify-between items-center mb-6 py-2">
             <div>
                 <h1 class="text-2xl font-black text-blue-900 tracking-tight">French Lab</h1>
-                <p class="text-[10px] text-blue-500 font-black uppercase tracking-[0.15em]">Advanced Listening • v3.3</p>
+                <p class="text-[10px] text-blue-500 font-black uppercase tracking-[0.15em]">Exam Prep • v3.4</p>
             </div>
             <button id="settings-trigger" class="bg-white shadow-md p-3 rounded-2xl border border-slate-100 active:rotate-45 transition-transform">⚙️</button>
         </header>
@@ -38,7 +37,6 @@
                     </div>
                     <button id="start-dictation" class="w-full bg-white text-blue-600 py-4 rounded-2xl font-black text-sm shadow-lg active:scale-95 transition-all">Start Dictation</button>
                 </div>
-                <div class="absolute -right-4 -bottom-4 text-8xl opacity-10 rotate-12 font-black">ABC</div>
             </div>
 
             <div class="bg-indigo-900 rounded-[2.5rem] p-6 text-white shadow-xl relative overflow-hidden">
@@ -49,7 +47,6 @@
                     </div>
                     <button id="start-listening" class="w-full bg-indigo-500 text-white py-4 rounded-2xl font-black text-sm shadow-lg active:scale-95 transition-all">Start Listening</button>
                 </div>
-                <div class="absolute -right-4 -bottom-4 text-8xl opacity-20 rotate-12 font-black">🎧</div>
             </div>
 
             <div class="grid grid-cols-3 gap-3">
@@ -73,32 +70,22 @@
             <div class="bg-white p-6 rounded-[2.5rem] shadow-sm border border-slate-100">
                 <div id="listen-level-tag" class="inline-block px-4 py-1.5 rounded-full bg-indigo-50 text-indigo-600 text-[10px] font-black uppercase mb-4 tracking-widest">A1</div>
                 <h3 id="listen-topic" class="text-xl font-black text-slate-800 mb-6 italic">Topic Title</h3>
-                
                 <div class="flex gap-2 mb-8">
-                    <button id="listen-play-btn" class="flex-1 bg-indigo-600 text-white font-black py-5 rounded-2xl shadow-lg active:scale-95 transition-all text-lg">Listen 🔊</button>
-                    <button id="listen-turtle-btn" class="bg-slate-800 text-white px-6 rounded-2xl font-bold text-xs uppercase tracking-tighter">Slow 🐢</button>
+                    <button id="listen-play-btn" class="flex-1 bg-indigo-600 text-white font-black py-5 rounded-2xl shadow-lg">Listen 🔊</button>
+                    <button id="listen-turtle-btn" class="bg-slate-800 text-white px-6 rounded-2xl font-bold text-xs">Slow 🐢</button>
                 </div>
-
-                <div id="mcq-container" class="space-y-6 text-left max-h-[40vh] overflow-y-auto px-1">
-                    </div>
-
-                <button id="submit-listening" class="w-full mt-8 bg-indigo-600 text-white font-black py-5 rounded-3xl uppercase tracking-widest hidden animate-pulse">Check My Answers</button>
+                <div id="mcq-container" class="space-y-6 text-left max-h-[40vh] overflow-y-auto px-1"></div>
+                <button id="submit-listening" class="w-full mt-8 bg-indigo-600 text-white font-black py-5 rounded-3xl uppercase tracking-widest hidden">Check Answers</button>
             </div>
         </div>
 
         <div id="view-listen-results" class="hidden space-y-4 flex-1">
             <div class="bg-white p-8 rounded-[3rem] shadow-2xl border border-slate-100 text-center">
-                <div id="listen-score-circle" class="w-24 h-24 rounded-full border-8 border-indigo-600 flex items-center justify-center mx-auto mb-6">
+                <div class="w-24 h-24 rounded-full border-8 border-indigo-600 flex items-center justify-center mx-auto mb-6">
                     <span id="listen-score-text" class="text-2xl font-black">0%</span>
                 </div>
-                <h3 class="text-2xl font-black text-slate-900 mb-2">Session Complete</h3>
-                <p class="text-sm text-slate-400 font-medium mb-8 uppercase tracking-widest">Transcript Review</p>
-                
-                <div class="text-left bg-slate-50 p-6 rounded-3xl border border-slate-100 max-h-[40vh] overflow-y-auto">
-                    <p id="listen-final-transcript" class="text-slate-800 leading-relaxed font-medium italic"></p>
-                </div>
-
-                <button class="exit-view w-full mt-8 bg-blue-600 text-white font-black py-5 rounded-3xl shadow-lg">Done & Back to Menu</button>
+                <p id="listen-final-transcript" class="text-left bg-slate-50 p-6 rounded-3xl border border-slate-100 text-slate-800 leading-relaxed font-medium italic overflow-y-auto max-h-[30vh]"></p>
+                <button class="exit-view w-full mt-8 bg-blue-600 text-white font-black py-5 rounded-3xl">Back to Menu</button>
             </div>
         </div>
 
@@ -107,11 +94,10 @@
             <div class="bg-white p-8 rounded-[3rem] shadow-sm border border-slate-100 text-center">
                 <div id="level-tag" class="inline-block px-4 py-1.5 rounded-full bg-blue-50 text-blue-600 text-[10px] font-black uppercase mb-6 tracking-widest">LEVEL</div>
                 <div class="flex flex-col gap-3 mb-8">
-                    <button id="play-btn" class="w-full bg-blue-600 text-white font-black py-6 rounded-3xl shadow-xl text-xl">Listen 🔊</button>
-                    <button id="turtle-btn" class="w-full bg-slate-800 text-white font-bold py-4 rounded-2xl text-xs uppercase tracking-widest">Slow 🐢</button>
+                    <button id="play-btn" class="w-full bg-blue-600 text-white font-black py-6 rounded-3xl shadow-xl">Listen 🔊</button>
+                    <button id="turtle-btn" class="w-full bg-slate-800 text-white font-bold py-4 rounded-2xl text-xs uppercase">Slow 🐢</button>
                 </div>
-                <textarea id="user-input" rows="3" placeholder="Tapez ici..." class="w-full p-6 bg-slate-50 rounded-[2rem] outline-none mb-6 resize-none font-medium leading-relaxed"></textarea>
-                <div class="flex justify-center gap-2 mb-8"><button class="accent-btn">é</button><button class="accent-btn">à</button><button class="accent-btn">è</button><button class="accent-btn">ç</button></div>
+                <textarea id="user-input" rows="3" placeholder="Tapez ici..." class="w-full p-6 bg-slate-50 rounded-[2rem] outline-none mb-6 font-medium leading-relaxed"></textarea>
                 <button id="check-btn" class="w-full bg-blue-600 text-white font-black py-5 rounded-3xl uppercase tracking-widest shadow-lg">Verify</button>
             </div>
             <div id="result-area" class="hidden bg-white p-8 rounded-[3rem] border border-slate-200 shadow-2xl">
@@ -124,19 +110,23 @@
         <div id="view-settings" class="hidden fixed inset-0 bg-white z-50 p-8 flex flex-col">
             <h2 class="text-3xl font-black text-slate-900 mb-8">Settings</h2>
             <div class="space-y-4 flex-1 overflow-y-auto">
-                <input type="password" id="api-key" placeholder="Gemini API Key..." class="w-full p-5 bg-slate-50 rounded-2xl border border-slate-200 font-mono text-xs">
-                <button id="btn-test-api" class="w-full py-3 bg-blue-50 text-blue-600 rounded-xl font-black text-[10px] uppercase border border-blue-100">Test Connection</button>
-                <div class="pt-8 space-y-3">
-                    <p class="text-[10px] font-black text-slate-400 uppercase ml-1">Danger Zone</p>
-                    <button id="btn-wipe-listening" class="w-full p-5 bg-indigo-50 text-indigo-700 rounded-2xl font-bold flex justify-between border border-indigo-100">Wipe Listening Lab</button>
-                    <button id="btn-wipe-vault" class="w-full p-5 bg-orange-50 text-orange-700 rounded-2xl font-bold flex justify-between border border-orange-100">Wipe Dictation Vault</button>
+                <div>
+                    <label class="block text-[10px] font-black text-slate-400 uppercase mb-2 ml-1">Gemini API Key</label>
+                    <div class="flex gap-2">
+                        <input type="password" id="api-key" placeholder="Key..." class="flex-1 p-5 bg-slate-50 rounded-2xl border border-slate-200 font-mono text-xs">
+                        <button id="btn-test-api" class="bg-blue-100 text-blue-600 px-4 rounded-2xl font-black text-[10px] uppercase">Test</button>
+                    </div>
                 </div>
+                <p class="text-[10px] font-black text-slate-400 uppercase ml-1">Danger Zone</p>
+                <button id="btn-wipe-listening" class="w-full p-5 bg-indigo-50 text-indigo-700 rounded-2xl font-bold flex justify-between border border-indigo-100">Wipe Listening Lab</button>
+                <button id="btn-wipe-vault" class="w-full p-5 bg-orange-50 text-orange-700 rounded-2xl font-bold flex justify-between border border-orange-100">Wipe Dictation Vault</button>
+                <button id="btn-reset-stats" class="w-full p-5 bg-red-50 text-red-700 rounded-2xl font-bold flex justify-between border border-red-100">Reset All Statistics</button>
             </div>
             <button id="save-settings" class="w-full bg-blue-600 text-white font-black py-5 rounded-[2rem] mt-4">Save & Close</button>
         </div>
 
         <footer class="mt-auto py-6 text-center text-[9px] font-bold text-slate-300 uppercase tracking-[0.3em]">
-            Foundation Pro • v3.3
+            EXAM PREP CORE • v3.4
         </footer>
     </div>
 
@@ -153,6 +143,12 @@
                 listening: document.getElementById('view-listening'),
                 listenResults: document.getElementById('view-listen-results'),
                 settings: document.getElementById('view-settings') 
+            };
+
+            const showToast = (msg) => {
+                const t = document.createElement('div'); t.className = 'toast animate-slide-up';
+                t.innerHTML = `<span>⚡</span> ${msg}`; document.getElementById('toast-container').appendChild(t);
+                setTimeout(() => t.remove(), 3000);
             };
 
             const switchView = (t) => { Object.values(views).forEach(v => v.classList.add('hidden')); views[t].classList.remove('hidden'); };
@@ -172,101 +168,143 @@
             };
 
             const sanitizeJSON = (raw) => {
-                const start = raw.indexOf("[");
-                const end = raw.lastIndexOf("]") + 1;
+                const start = raw.indexOf("["); const end = raw.lastIndexOf("]") + 1;
                 return JSON.parse(raw.substring(start, end));
             };
 
-            // REFILL LISTENING (Advanced v3.3 Logic)
-            document.getElementById('refill-listening-btn').onclick = async () => {
+            // API TEST
+            document.getElementById('btn-test-api').onclick = async () => {
                 const key = document.getElementById('api-key').value;
-                if(!key) return alert("API Key Required");
-                const btn = document.getElementById('refill-listening-btn'); btn.innerText = "...";
-                
-                const prompt = `Generate 10 French listening exercises.
-                Distribution: 10% A1, 30% A2, 60% B1.
-                Requirements: Each transcript must be 100+ words, 6-10 sentences.
-                Quiz: 5 MCQ questions per item.
-                JSON ONLY: [{"topic": "...", "transcript": "...", "level": "A1/A2/B1", "questions": [{"q": "...", "options": ["A", "B", "C"], "correct": 0}]}]`;
+                if(!key) return showToast("No Key");
+                try {
+                    const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${key}`, {
+                        method: 'POST', headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({ contents: [{ parts: [{ text: "hi" }]}] })
+                    });
+                    const d = await resp.json();
+                    if(d.error) throw new Error(d.error.message);
+                    showToast("Connection Successful!");
+                } catch (e) { alert("Test Failed: " + e.message); }
+            };
 
+            // DICTATION REFILL
+            document.getElementById('refill-btn').onclick = async () => {
+                const key = document.getElementById('api-key').value;
+                if(!key) return alert("API Key Needed");
+                const btn = document.getElementById('refill-btn'); btn.innerText = "...";
+                const prompt = `Generate 50 French sentences (A1, A2, B1). JSON ONLY: [{"text": "...", "english": "...", "level": "A1/A2/B1"}]`;
                 try {
                     const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${key}`, {
                         method: 'POST', headers: {'Content-Type': 'application/json'},
                         body: JSON.stringify({ contents: [{ parts: [{ text: prompt }]}] })
                     });
-                    const data = await resp.json();
-                    lVault = [...lVault, ...sanitizeJSON(data.candidates[0].content.parts[0].text)];
-                    updateUI();
+                    const d = await resp.json();
+                    vault = [...vault, ...sanitizeJSON(d.candidates[0].content.parts[0].text)];
+                    updateUI(); showToast("Dictation Refilled!");
                 } catch (e) { alert("Refill Error: " + e.message); }
                 btn.innerText = "Refill";
             };
 
-            // LISTENING LOGIC
-            const setupListening = () => {
-                if(lVault.length === 0) return alert("Refill Vault First!");
+            // LISTENING REFILL
+            document.getElementById('refill-listening-btn').onclick = async () => {
+                const key = document.getElementById('api-key').value;
+                if(!key) return alert("API Key Needed");
+                const btn = document.getElementById('refill-listening-btn'); btn.innerText = "...";
+                const prompt = `Generate 10 French listening exercises. Mix: 10% A1, 30% A2, 60% B1. 
+                Transcripts: 100+ words. Quizzes: 5 Inference-based questions (harder).
+                JSON ONLY: [{"topic": "...", "transcript": "...", "level": "A1/A2/B1", "questions": [{"q": "...", "options": ["A", "B", "C"], "correct": 0}]}]`;
+                try {
+                    const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${key}`, {
+                        method: 'POST', headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({ contents: [{ parts: [{ text: prompt }]}] })
+                    });
+                    const d = await resp.json();
+                    lVault = [...lVault, ...sanitizeJSON(d.candidates[0].content.parts[0].text)];
+                    updateUI(); showToast("Listening Refilled!");
+                } catch (e) { alert("Refill Error: " + e.message); }
+                btn.innerText = "Refill";
+            };
+
+            // SESSION ENGINES
+            const startListening = () => {
+                if(lVault.length === 0) return alert("Vault Empty");
                 currentItem = lVault[0];
                 document.getElementById('listen-level-tag').innerText = currentItem.level;
                 document.getElementById('listen-topic').innerText = currentItem.topic;
-                
-                const container = document.getElementById('mcq-container');
-                container.innerHTML = "";
+                const container = document.getElementById('mcq-container'); container.innerHTML = "";
                 currentItem.questions.forEach((q, qIdx) => {
-                    const qDiv = document.createElement('div');
-                    qDiv.className = "space-y-3";
-                    qDiv.innerHTML = `<p class="font-black text-slate-900 text-sm">${qIdx + 1}. ${q.q}</p>`;
+                    const d = document.createElement('div'); d.className = "space-y-3";
+                    d.innerHTML = `<p class="font-black text-sm">${qIdx + 1}. ${q.q}</p>`;
                     q.options.forEach((opt, oIdx) => {
                         const b = document.createElement('button');
                         b.className = "w-full text-left p-4 rounded-2xl border-2 border-slate-50 bg-slate-50 text-xs font-bold active:bg-indigo-100 transition-all";
                         b.innerText = opt;
                         b.onclick = () => {
-                            qDiv.querySelectorAll('button').forEach(btn => btn.classList.remove('border-indigo-600', 'bg-white', 'text-indigo-600'));
-                            b.classList.add('border-indigo-600', 'bg-white', 'text-indigo-600');
-                            b.dataset.selected = oIdx;
-                            if(document.querySelectorAll('[data-selected]').length === currentItem.questions.length) 
-                                document.getElementById('submit-listening').classList.remove('hidden');
+                            d.querySelectorAll('button').forEach(btn => btn.classList.remove('border-indigo-600', 'bg-white', 'text-indigo-600'));
+                            b.classList.add('border-indigo-600', 'bg-white', 'text-indigo-600'); b.dataset.selected = oIdx;
+                            if(document.querySelectorAll('[data-selected]').length === currentItem.questions.length) document.getElementById('submit-listening').classList.remove('hidden');
                         };
-                        qDiv.appendChild(b);
+                        d.appendChild(b);
                     });
-                    container.appendChild(qDiv);
+                    container.appendChild(d);
                 });
-                document.getElementById('submit-listening').classList.add('hidden');
-                switchView('listening');
+                document.getElementById('submit-listening').classList.add('hidden'); switchView('listening');
             };
 
+            const startDictation = () => {
+                if(vault.length === 0) return alert("Vault Empty");
+                currentItem = vault[0];
+                document.getElementById('level-tag').innerText = currentItem.level;
+                document.getElementById('user-input').value = "";
+                document.getElementById('result-area').classList.add('hidden');
+                document.getElementById('check-btn').classList.remove('hidden');
+                switchView('dictation');
+            };
+
+            // SUBMIT & AUDIO
             document.getElementById('submit-listening').onclick = () => {
-                const selected = document.querySelectorAll('[data-selected]');
-                let correctCount = 0;
-                selected.forEach((s, i) => { if(parseInt(s.dataset.selected) === currentItem.questions[i].correct) correctCount++; });
-                const score = Math.round((correctCount / currentItem.questions.length) * 100);
-                
+                const sel = document.querySelectorAll('[data-selected]');
+                let corr = 0; sel.forEach((s, i) => { if(parseInt(s.dataset.selected) === currentItem.questions[i].correct) corr++; });
+                const score = Math.round((corr / currentItem.questions.length) * 100);
                 history.push({ level: currentItem.level, score, date: new Date().toISOString() });
-                
-                // Show Review View
                 document.getElementById('listen-score-text').innerText = score + "%";
                 document.getElementById('listen-final-transcript').innerText = currentItem.transcript;
-                lVault.shift();
-                updateUI();
-                switchView('listenResults');
+                lVault.shift(); updateUI(); switchView('listenResults');
             };
 
-            // AUDIO
+            document.getElementById('check-btn').onclick = () => {
+                const inp = document.getElementById('user-input').value.toLowerCase().replace(/[.,!?]/g, "").trim();
+                const tgt = currentItem.text.toLowerCase().replace(/[.,!?]/g, "").trim();
+                const score = inp === tgt ? 100 : 0;
+                history.push({ level: currentItem.level, score, date: new Date().toISOString() });
+                document.getElementById('score-display').innerText = score + "%";
+                document.getElementById('correct-text').innerText = currentItem.text;
+                document.getElementById('result-area').classList.remove('hidden');
+                document.getElementById('check-btn').classList.add('hidden');
+                vault.shift(); updateUI();
+            };
+
             const playAudio = (text, rate) => {
                 window.speechSynthesis.cancel();
                 const u = new SpeechSynthesisUtterance(text); u.lang = 'fr-FR'; u.rate = rate; window.speechSynthesis.speak(u);
             };
 
+            // BUTTON BINDINGS
+            document.getElementById('start-listening').onclick = startListening;
+            document.getElementById('start-dictation').onclick = startDictation;
+            document.getElementById('next-btn').onclick = startDictation;
+            document.getElementById('play-btn').onclick = () => playAudio(currentItem.text, 0.85);
+            document.getElementById('turtle-btn').onclick = () => playAudio(currentItem.text, 0.6);
             document.getElementById('listen-play-btn').onclick = () => playAudio(currentItem.transcript, 0.85);
             document.getElementById('listen-turtle-btn').onclick = () => playAudio(currentItem.transcript, 0.6);
-
-            // BINDINGS & SETTINGS
-            document.getElementById('start-listening').onclick = setupListening;
             document.getElementById('settings-trigger').onclick = () => switchView('settings');
             document.getElementById('save-settings').onclick = () => { localStorage.setItem('gemini_api_key', document.getElementById('api-key').value); switchView('menu'); };
             document.querySelectorAll('.exit-view').forEach(b => b.onclick = () => switchView('menu'));
-            document.getElementById('btn-wipe-listening').onclick = () => { lVault = []; updateUI(); alert("Wiped."); };
-            
-            const savedKey = localStorage.getItem('gemini_api_key');
-            if(savedKey) document.getElementById('api-key').value = savedKey;
+            document.getElementById('btn-wipe-listening').onclick = () => { lVault = []; updateUI(); showToast("Listening Wiped"); };
+            document.getElementById('btn-wipe-vault').onclick = () => { vault = []; updateUI(); showToast("Dictation Wiped"); };
+            document.getElementById('btn-reset-stats').onclick = () => { history = []; updateUI(); showToast("Stats Reset"); };
+
+            if(localStorage.getItem('gemini_api_key')) document.getElementById('api-key').value = localStorage.getItem('gemini_api_key');
             updateUI();
         });
     </script>
